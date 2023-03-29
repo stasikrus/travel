@@ -2,6 +2,7 @@ import { createSiteMenuTemplate } from "./view/site-menu.js";
 import { createTripFilters } from "./view/trip-filters.js";
 import { createTripInfo } from "./view/trip-info.js";
 import { createTripSort } from "./view/trip-sort.js";
+import { createEditPoint } from "./view/edit-point.js";
 
 const render = (container, template, place) => {
     container.insertAdjacentHTML(place, template);
@@ -24,3 +25,7 @@ const siteMainElement = document.querySelector('.page-main');
 const tripEvents = siteMainElement.querySelector('.trip-events');
 
 render(tripEvents, createTripSort(), 'afterbegin');
+
+const tripList = tripEvents.querySelector('.trip-events__list');
+
+render(tripList, createEditPoint(), 'afterbegin');
