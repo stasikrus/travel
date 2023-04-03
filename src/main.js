@@ -3,6 +3,12 @@ import { createTripFilters } from "./view/trip-filters.js";
 import { createTripInfo } from "./view/trip-info.js";
 import { createTripSort } from "./view/trip-sort.js";
 import { createEditPoint } from "./view/edit-point.js";
+import { createPointTrip } from "./view/point.js";
+import { createNewPoint } from "./view/new-point.js";
+
+import { createDescription } from "./mock/point.js";
+
+const POINT_COUNT = 3;
 
 const render = (container, template, place) => {
     container.insertAdjacentHTML(place, template);
@@ -28,4 +34,12 @@ render(tripEvents, createTripSort(), 'afterbegin');
 
 const tripList = tripEvents.querySelector('.trip-events__list');
 
-render(tripList, createEditPoint(), 'afterbegin');
+render(tripList, createNewPoint(), 'afterbegin');
+
+for (let i = 0; i < POINT_COUNT; i++) {
+    render(tripList, createPointTrip(), 'beforeend');
+};
+
+render(tripList, createEditPoint(), 'beforeend');
+
+createDescription()
