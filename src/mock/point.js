@@ -52,22 +52,64 @@ const createDescription = () => {
         'Nunc fermentum tortor ac porta dapibus.',
         'In rutrum ac purus sit amet tempus.',
     ];
-
-    let newDescription = [];
-    let photos = [];
-
+     
+    let newDescription = {
+        description: [],
+        photos: [],
+    };
 
     for (let i = 0; i < descriptions.length - 1; i++) {
-        if (i === getRandomInteger(0, descriptions.length - 1) && newDescription.length < getRandomInteger(0, 5)) {
-            newDescription.push(descriptions[i]);
+        if (i === getRandomInteger(0, descriptions.length - 1) && newDescription.description.length < getRandomInteger(0, 5)) {
+            newDescription.description.push(descriptions[i]);
         };
     };
 
     for (let i = 0; i < getRandomInteger(0, 5); i++) {
-        photos.push(`http://picsum.photos/248/152?r=${getRandomInteger(0, 10)}`)
+        newDescription.photos.push(`http://picsum.photos/248/152?r=${getRandomInteger(0, 10)}`);
     };
 
-    console.log(photos);
+    return newDescription;
+
 };
 
-export { createDescription };
+const createOffers = () => {
+    const offers = [
+        {
+            offer: 'Add luggage',
+            price: 50,
+        },
+        {
+            offer: 'Switch to comfort',
+            price: 80,
+        },
+        {
+            offer: 'Add meal',
+            price: 80,
+        },
+        {
+            offer: 'Choose seats',
+            price: 5,
+        },
+        {
+            offer: 'Travel by train',
+            price: 40,
+        },
+    ];
+
+    const randomOffers = [];
+
+    //for (let i = 0; i < getRandomInteger(0, 5); i++) {
+        //randomOffers.push(offers[i]);
+    //};
+
+    return offers[getRandomInteger(0, 5)];
+};
+
+export const generatePoint = () => {
+    return {
+        event: createEventType(),
+        destination: createDestination(),
+        description: createDescription(),
+        offers: createOffers(),  
+    };
+};
