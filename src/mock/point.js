@@ -52,21 +52,33 @@ const createDescription = () => {
         'Nunc fermentum tortor ac porta dapibus.',
         'In rutrum ac purus sit amet tempus.',
     ];
-     
-    let newDescription = {
-        description: [],
-        photos: [],
-    };
 
-    for (let i = 0; i < descriptions.length - 1; i++) {
-        if (i === getRandomInteger(0, descriptions.length - 1) && newDescription.description.length < getRandomInteger(0, 5)) {
-            newDescription.description.push(descriptions[i]);
-        };
+     
+     
+    let desArr = []; 
+    let photoValue = [];
+
+
+    let newDescription = {
+        info: desArr,
+        photos: photoValue,
+     };
+
+    for (let i = 0; i < getRandomInteger(0, 5); i++) {     
+           desArr.push(descriptions[getRandomInteger(0, descriptions.length - 1)]) ;
     };
 
     for (let i = 0; i < getRandomInteger(0, 5); i++) {
-        newDescription.photos.push(`http://picsum.photos/248/152?r=${getRandomInteger(0, 10)}`);
+        photoValue.push(`http://picsum.photos/248/152?r=${getRandomInteger(0, 10)}`);
     };
+
+    if (desArr.length > 1) {
+       newDescription.info = desArr.join(''); 
+    };
+        
+    
+
+    
 
     return newDescription;
 
@@ -96,13 +108,11 @@ const createOffers = () => {
         },
     ];
 
-    const randomOffers = [];
-
     //for (let i = 0; i < getRandomInteger(0, 5); i++) {
         //randomOffers.push(offers[i]);
     //};
 
-    return offers[getRandomInteger(0, 5)];
+    return offers[getRandomInteger(0, offers.length - 1)];
 };
 
 export const generatePoint = () => {

@@ -36,7 +36,7 @@ render(tripEvents, createTripSort(), 'afterbegin');
 
 const tripList = tripEvents.querySelector('.trip-events__list');
 
-render(tripList, createNewPoint(), 'afterbegin');
+render(tripList, createNewPoint(generatePoint()), 'afterbegin');
 
 for (let i = 0; i < POINT_COUNT; i++) {
     render(tripList, createPointTrip(points[i]), 'beforeend');
