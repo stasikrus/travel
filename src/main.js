@@ -27,7 +27,7 @@ render(tripFilters, createTripFilters(), 'beforeend');
 
 const tripInfo = siteHeadElement.querySelector('.trip-main');
 
-render(tripInfo, createTripInfo(), 'afterbegin');
+render(tripInfo, createTripInfo(generatePoint()), 'afterbegin');
 
 const siteMainElement = document.querySelector('.page-main');
 const tripEvents = siteMainElement.querySelector('.trip-events');
@@ -38,9 +38,11 @@ const tripList = tripEvents.querySelector('.trip-events__list');
 
 render(tripList, createNewPoint(generatePoint()), 'afterbegin');
 
+
 for (let i = 0; i < POINT_COUNT; i++) {
     render(tripList, createPointTrip(points[i]), 'beforeend');
 };
+
 
 render(tripList, createEditPoint(), 'beforeend');
 

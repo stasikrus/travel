@@ -1,4 +1,4 @@
-export const createNewPoint = ({destination, description}) => {
+export const createNewPoint = ({destination: {description}}) => {
 
     return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -71,7 +71,7 @@ export const createNewPoint = ({destination, description}) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             Flight
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -155,7 +155,7 @@ export const createNewPoint = ({destination, description}) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description.info}</p>
+          <p class="event__destination-description">${description}</p>
         </section>
       </section>
     </form>

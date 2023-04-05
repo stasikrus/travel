@@ -5,64 +5,80 @@ const getRandomInteger = (a = 0, b = 1) => {
     return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const createEventType = () => {
-    const eventTypes = [
-        'Taxi',
-        'Bus',
-        'Train',
-        'Ship',
-        'Transport',
-        'Drive',
-        'Flight',
-        'Check-in',
-        'Sightseeing',
-        'Restaurant',
-    ];
-
-    const randomIndex = getRandomInteger(0, eventTypes.length - 1);
-
-    return eventTypes[randomIndex];
+const getRandomElement = (arr) => {
+    return arr[getRandomInteger(0, arr.length - 1)];
 };
+
+const eventTypes = [
+    'taxi',
+    'bus',
+    'train',
+    'ship',
+    'transport',
+    'drive',
+    'flight',
+    'check-in',
+    'sightseeing',
+    'restaurant',
+];
+
+const destinations = [
+    'Moscow',
+    'Paris',
+    'Madrid',
+    'Minsk',
+    'London',
+];
+
+const descriptions = [
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    'Cras aliquet varius magna, non porta ligula feugiat eget.',
+    'Fusce tristique felis at fermentum pharetra.',
+    'Aliquam id orci ut lectus varius viverra.',
+    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
+    'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
+    'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
+    'Sed sed nisi sed augue convallis suscipit in sed felis.',
+    'Aliquam erat volutpat.',
+    'Nunc fermentum tortor ac porta dapibus.',
+    'In rutrum ac purus sit amet tempus.',
+];
+
+const offers = [
+    {
+        offer: 'Add luggage',
+        price: 50,
+    },
+    {
+        offer: 'Switch to comfort',
+        price: 80,
+    },
+    {
+        offer: 'Add meal',
+        price: 80,
+    },
+    {
+        offer: 'Choose seats',
+        price: 5,
+    },
+    {
+        offer: 'Travel by train',
+        price: 40,
+    },
+];
+
 
 const createDestination = () => {
-    const destinations = [
-        'Moscow',
-        'Paris',
-        'Madrid',
-        'Minsk',
-        'London',
-    ];
 
-    const randomIndex = getRandomInteger(0, destinations.length - 1);
-
-    return destinations[randomIndex];
-};
-
-const createDescription = () => {
-    const descriptions = [
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        'Cras aliquet varius magna, non porta ligula feugiat eget.',
-        'Fusce tristique felis at fermentum pharetra.',
-        'Aliquam id orci ut lectus varius viverra.',
-        'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-        'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-        'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-        'Sed sed nisi sed augue convallis suscipit in sed felis.',
-        'Aliquam erat volutpat.',
-        'Nunc fermentum tortor ac porta dapibus.',
-        'In rutrum ac purus sit amet tempus.',
-    ];
-
-     
-     
     let desArr = []; 
     let photoValue = [];
 
 
-    let newDescription = {
-        info: desArr,
-        photos: photoValue,
-     };
+    let destination = {
+       "description": desArr,
+       "name": getRandomElement(destinations),
+       "pictures": photoValue
+    };
 
     for (let i = 0; i < getRandomInteger(0, 5); i++) {     
            desArr.push(descriptions[getRandomInteger(0, descriptions.length - 1)]) ;
@@ -73,53 +89,37 @@ const createDescription = () => {
     };
 
     if (desArr.length > 1) {
-       newDescription.info = desArr.join(''); 
+       destination.description = desArr.join(''); 
     };
         
     
-
-    
-
-    return newDescription;
+    return destination;
 
 };
 
 const createOffers = () => {
-    const offers = [
-        {
-            offer: 'Add luggage',
-            price: 50,
-        },
-        {
-            offer: 'Switch to comfort',
-            price: 80,
-        },
-        {
-            offer: 'Add meal',
-            price: 80,
-        },
-        {
-            offer: 'Choose seats',
-            price: 5,
-        },
-        {
-            offer: 'Travel by train',
-            price: 40,
-        },
-    ];
+    let offersList = {   
+        "type": getRandomElement(eventTypes),
+        "offers": getRandomElement(offers)         
+    };
+    
 
     //for (let i = 0; i < getRandomInteger(0, 5); i++) {
         //randomOffers.push(offers[i]);
     //};
 
-    return offers[getRandomInteger(0, offers.length - 1)];
+    return offersList;
 };
 
 export const generatePoint = () => {
     return {
-        event: createEventType(),
-        destination: createDestination(),
-        description: createDescription(),
-        offers: createOffers(),  
+      "base_price": 1100,
+      "date_from": "2019-07-10T22:55:56.845Z",
+      "date_to": "2019-07-11T11:22:13.375Z",
+      "destination": createDestination(),
+      "id": "0",
+      "is_favorite": false,
+      "offers": createOffers(),
+      "type": getRandomElement(destinations)
     };
 };
