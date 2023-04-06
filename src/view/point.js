@@ -1,11 +1,24 @@
-export const createPointTrip = ({type, offers: {type: event, offers: {offer, price}}}) => {
+const createPointOfferTemplate = (offers) => {
+  return offers.length > 0 ? `${offers.map(({offer, price}) => `<li
+    class="event__offer">
+    <span class="event__offer-title">${offer}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${price}</span>
+    </li>`).join('')}`
+    : '';
+};
+
+
+export const createPointTrip = ({type, base_price, offers: {type: event, offers}}) => {
+  
+
     return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="2019-03-18">MAR 18</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${event}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type}</h3>
+      <h3 class="event__title">${event} ${type}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
@@ -15,15 +28,11 @@ export const createPointTrip = ({type, offers: {type: event, offers: {offer, pri
         <p class="event__duration">30M</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${price}</span>
+        &euro;&nbsp;<span class="event__price-value">${base_price}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">${offer}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${price}</span>
-        </li>
+        ${createPointOfferTemplate(offers)}
       </ul>
       <button class="event__favorite-btn event__favorite-btn--active" type="button">
         <span class="visually-hidden">Add to favorite</span>

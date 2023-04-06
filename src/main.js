@@ -5,10 +5,11 @@ import { createTripSort } from "./view/trip-sort.js";
 import { createEditPoint } from "./view/edit-point.js";
 import { createPointTrip } from "./view/point.js";
 import { createNewPoint } from "./view/new-point.js";
+import { createCoastTemplate } from "./view/trip-coast.js";
 
 import { generatePoint } from "./mock/point.js";
 
-const POINT_COUNT = 3;
+const POINT_COUNT = 10;
 
 const points = new Array(POINT_COUNT).fill().map(generatePoint);
 
@@ -27,7 +28,11 @@ render(tripFilters, createTripFilters(), 'beforeend');
 
 const tripInfo = siteHeadElement.querySelector('.trip-main');
 
-render(tripInfo, createTripInfo(generatePoint()), 'afterbegin');
+render(tripInfo, createTripInfo(points), 'afterbegin');
+
+const coastTripInfo = tripInfo.querySelector('.trip-info');
+render(coastTripInfo, createCoastTemplate(points), 'beforeend');
+
 
 const siteMainElement = document.querySelector('.page-main');
 const tripEvents = siteMainElement.querySelector('.trip-events');

@@ -1,48 +1,17 @@
-const getRandomInteger = (a = 0, b = 1) => {
-    const lower = Math.ceil(Math.min(a, b));
-    const upper = Math.floor(Math.max(a, b));
-  
-    return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
+import { getRandomElement, getRandomInteger } from "../utils";
+import { TYPES, DESTINATIONS, DESCRIPTIONS } from "../const";
+import dayjs from "dayjs";
 
-const getRandomElement = (arr) => {
-    return arr[getRandomInteger(0, arr.length - 1)];
-};
-
-const eventTypes = [
-    'taxi',
-    'bus',
-    'train',
-    'ship',
-    'transport',
-    'drive',
-    'flight',
-    'check-in',
-    'sightseeing',
-    'restaurant',
-];
-
-const destinations = [
-    'Moscow',
-    'Paris',
-    'Madrid',
-    'Minsk',
-    'London',
-];
-
-const descriptions = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    'Cras aliquet varius magna, non porta ligula feugiat eget.',
-    'Fusce tristique felis at fermentum pharetra.',
-    'Aliquam id orci ut lectus varius viverra.',
-    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-    'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-    'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-    'Sed sed nisi sed augue convallis suscipit in sed felis.',
-    'Aliquam erat volutpat.',
-    'Nunc fermentum tortor ac porta dapibus.',
-    'In rutrum ac purus sit amet tempus.',
-];
+const Period = {
+    START_DATE_MIN: -7,
+    START_DATE_MAX: -4,
+    DATE_FROM_MIN: 60,
+    DATE_FROM_MAX: 120,
+    DATE_TO_MIN: 180,
+    DATE_TO_MAX: 2880,
+    BASE_PRICE_MIN: 20,
+    BASE_PRICE_MAX: 1500,
+}
 
 const offers = [
     {
@@ -76,12 +45,12 @@ const createDestination = () => {
 
     let destination = {
        "description": desArr,
-       "name": getRandomElement(destinations),
+       "name": getRandomElement(DESTINATIONS),
        "pictures": photoValue
     };
 
     for (let i = 0; i < getRandomInteger(0, 5); i++) {     
-           desArr.push(descriptions[getRandomInteger(0, descriptions.length - 1)]) ;
+           desArr.push(DESCRIPTIONS[getRandomInteger(0, DESCRIPTIONS.length - 1)]) ;
     };
 
     for (let i = 0; i < getRandomInteger(0, 5); i++) {
@@ -99,27 +68,44 @@ const createDestination = () => {
 
 const createOffers = () => {
     let offersList = {   
-        "type": getRandomElement(eventTypes),
-        "offers": getRandomElement(offers)         
+        "type": getRandomElement(TYPES),
+        "offers": []         
     };
     
 
-    //for (let i = 0; i < getRandomInteger(0, 5); i++) {
-        //randomOffers.push(offers[i]);
-    //};
+    for (let i = 0; i < getRandomInteger(0, 5); i++) {
+        offersList.offers.push(getRandomElement(offers));
+    };
 
     return offersList;
 };
 
+const createDateGenerator = () => {
+    let startDate = dayjs().add(getRandomInteger(Period.START_DATE_MIN, Period.START_DATE_MAX), 'd');
+    return () => {
+        const dateFrom = dayjs(startDate).add(getRandomInteger(Period.DATE_FROM_MIN, Period.DATE_FROM_MAX), 'm').toDate();
+        const dateTo = dayjs(dateFrom).add(getRandomInteger(Period.DATE_TO_MIN, Period.DATE_TO_MAX), 'm').toDate();
+        startDate = dateTo;
+        return {
+            dateFrom, dateTo,
+        };
+
+    };
+};
+
+const dateGenerator = createDateGenerator;
+
+
+
 export const generatePoint = () => {
     return {
-      "base_price": 1100,
-      "date_from": "2019-07-10T22:55:56.845Z",
-      "date_to": "2019-07-11T11:22:13.375Z",
+      "base_price": getRandomInteger(Period.BASE_PRICE_MIN, Period.BASE_PRICE_MAX),
+      "date_from": dateGenerator.dateFrom,
+      "date_to": dateGenerator.dateTo,
       "destination": createDestination(),
       "id": "0",
-      "is_favorite": false,
+      "is_favorite": Boolean(getRandomInteger()),
       "offers": createOffers(),
-      "type": getRandomElement(destinations)
+      "type": getRandomElement(DESTINATIONS)
     };
 };
