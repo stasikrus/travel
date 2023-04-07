@@ -93,7 +93,7 @@ const createDateGenerator = () => {
     };
 };
 
-const dateGenerator = createDateGenerator;
+const dateGenerator = createDateGenerator();
 
 
 

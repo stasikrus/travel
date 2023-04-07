@@ -49,6 +49,6 @@ for (let i = 0; i < POINT_COUNT; i++) {
 };
 
 
-render(tripList, createEditPoint(), 'beforeend');
+render(tripList, createEditPoint(points[0]), 'beforeend');
 
 console.log(points);
