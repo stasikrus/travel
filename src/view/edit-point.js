@@ -1,5 +1,6 @@
 import { TYPES, DESTINATIONS } from "../const";
 import { getRandomElement } from "../utils";
+import { createElement } from "../utils";
 
 const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
   return avaibleTypes.map((type) => `<div class="event__type-item">
@@ -22,7 +23,7 @@ const createPhotoContainer = ({destination: {pictures}}) => {
 };
 
 
-export const createEditPoint = (destination) => {
+const createEditPoint = (destination) => {
     const randomEvent = getRandomElement(TYPES);
     return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -134,3 +135,26 @@ export const createEditPoint = (destination) => {
     </form>
   </li>`
 };
+
+export default class EditPoint {
+  constructor(destination) {
+    this._destination = destination;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditPoint(this._destination);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

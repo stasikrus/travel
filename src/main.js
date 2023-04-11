@@ -2,8 +2,8 @@ import SiteMenuView from "./view/site-menu.js";
 import TripFiltersView from "./view/trip-filters.js";
 import { createTripInfo } from "./view/trip-info.js";
 import TripSortView from "./view/trip-sort.js";
-import { createEditPoint } from "./view/edit-point.js";
-import { createPointTrip } from "./view/point.js";
+import EditPointView from "./view/edit-point.js";
+import PointView from "./view/point.js";
 import { createNewPoint } from "./view/new-point.js";
 import { createCoastTemplate } from "./view/trip-coast.js";
 import { renderTemplate, renderElement, RenderPosition } from "./utils.js";
@@ -39,13 +39,13 @@ renderTemplate(tripEvents, eventsList(), 'beforeend');
 
 const tripList = tripEvents.querySelector('.trip-events__list');
 
-renderTemplate(tripList, createNewPoint(generatePoint()), 'beforeend');
+renderElement(tripList, new EditPointView(points[0]).getElement(), RenderPosition.BEFOREEND);
 
 
 for (let i = 0; i < POINT_COUNT; i++) {
-    renderTemplate(tripList, createPointTrip(points[i]), 'beforeend');
+    renderElement(tripList, new PointView(points[i]).getElement(), RenderPosition.BEFOREEND);
 };
 
-renderTemplate(tripList, createEditPoint(points[0]), 'beforeend');
 
+renderTemplate(tripList, createNewPoint(generatePoint()), 'beforeend');
 console.log(points);

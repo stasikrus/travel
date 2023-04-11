@@ -1,3 +1,5 @@
+import { createElement } from "../utils";
+
 const createPointOfferTemplate = (offers) => {
   return offers.length > 0 ? `${offers.map(({offer, price}) => `<li
     class="event__offer">
@@ -9,7 +11,7 @@ const createPointOfferTemplate = (offers) => {
 };
 
 
-export const createPointTrip = ({type, is_favorite, base_price, offers: {type: event, offers}}) => {
+const createPointTrip = ({type, is_favorite, base_price, offers: {type: event, offers}}) => {
   
   const favoriteClassBtn = is_favorite ? 'event__favorite-btn--active' : '';
   
@@ -47,4 +49,28 @@ export const createPointTrip = ({type, is_favorite, base_price, offers: {type: e
       </button>
     </div>
   </li>`
+};
+
+export default class Point {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPointTrip(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+    
+  }
+
+  removeElement() {
+    this._element = null;
+  }
 };
