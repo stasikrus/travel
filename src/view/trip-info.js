@@ -1,3 +1,5 @@
+import { createElement } from "../utils";
+
 const getRoute = (randomPoints) => {
   const uniqueCityList = new Set(randomPoints.map(({destination}) => destination.name));
   const totalRoute = Array.from(uniqueCityList).join(' &mdash; ');
@@ -5,7 +7,7 @@ const getRoute = (randomPoints) => {
   return totalRoute;
 }
 
-export const createTripInfo = (randomPoints) => {
+const createTripInfo = (randomPoints) => {
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
@@ -16,3 +18,26 @@ export const createTripInfo = (randomPoints) => {
 
     </section>`
 };
+
+export default class TripInfo {
+  constructor(randomPoints) {
+    this._randomPoints = randomPoints;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfo(this._randomPoints);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
