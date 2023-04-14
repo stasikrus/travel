@@ -1,4 +1,4 @@
-import { createElement } from "../utils";
+import AbstractView from "./abstract";
 
 const getRoute = (randomPoints) => {
   const uniqueCityList = new Set(randomPoints.map(({destination}) => destination.name));
@@ -19,25 +19,13 @@ const createTripInfo = (randomPoints) => {
     </section>`
 };
 
-export default class TripInfo {
+export default class TripInfo extends AbstractView {
   constructor(randomPoints) {
+    super()
     this._randomPoints = randomPoints;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripInfo(this._randomPoints);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

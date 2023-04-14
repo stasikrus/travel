@@ -9,21 +9,6 @@ const getRandomElement = (arr) => {
     return arr[getRandomInteger(0, arr.length - 1)];
 };
 
-export const RenderPosition = {
-    AFTERBEGIN: 'afterbegin',
-    BEFOREEND: 'beforeend',
-};
-
-export const render = (container, element, place) => {
-    switch (place) {
-      case RenderPosition.AFTERBEGIN:
-        container.prepend(element);
-        break;
-      case RenderPosition.BEFOREEND:
-        container.append(element);
-        break;
-    }
-};
 
 export const renderTemplate = (container, template, place) => {
     container.insertAdjacentHTML(place, template);

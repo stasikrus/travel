@@ -1,6 +1,6 @@
 import { TYPES, DESTINATIONS } from "../const";
 import { getRandomElement } from "../utils";
-import { createElement } from "../utils";
+import AbstractView from "./abstract";
 
 const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
   return avaibleTypes.map((type) => `<div class="event__type-item">
@@ -136,25 +136,26 @@ const createEditPoint = (destination) => {
   </li>`
 };
 
-export default class EditPoint {
+export default class EditPoint extends AbstractView {
   constructor(destination) {
+    super()
     this._destination = destination;
-    this._element = null;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createEditPoint(this._destination);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
+
 }

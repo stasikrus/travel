@@ -1,4 +1,4 @@
-import { createElement } from "../utils";
+import AbstractView from "./abstract";
 
 const createTripCoast = (randomPoints) => {
     let totalCoast = 0;
@@ -12,25 +12,13 @@ const createCoastTemplate = (randomPoints) => {
     </p>`
 };
 
-export default class TripCoast {
+export default class TripCoast extends AbstractView {
   constructor(randomPoints) {
+    super()
     this._randomPoints = randomPoints;
-    this._element = null;
   }
 
   getTemplate() {
     return createCoastTemplate(this._randomPoints);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

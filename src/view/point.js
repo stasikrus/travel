@@ -1,4 +1,4 @@
-import { createElement } from "../utils";
+import AbstractView from "./abstract";
 
 const createPointOfferTemplate = (offers) => {
   return offers.length > 0 ? `${offers.map(({offer, price}) => `<li
@@ -51,26 +51,25 @@ const createPointTrip = ({type, is_favorite, base_price, offers: {type: event, o
   </li>`
 };
 
-export default class Point {
+export default class Point extends AbstractView {
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPointTrip(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-    
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 };
