@@ -1,10 +1,9 @@
 import TripSortView from "../view/trip-sort";
 import EventsListView from "../view/events-list";
 import NoPointView from "../view/no-point";
-import EditPointView from "../view/edit-point";
-import PointView from "../view/point";
 import TripView from "../view/trip";
-import { render, RenderPosition, replace } from "../utils/render";
+import { render, RenderPosition } from "../utils/render";
+import PointPresenter from "./point";
 
 export default class Trip {
     constructor(tripContainer) {
@@ -30,36 +29,8 @@ export default class Trip {
     }
 
     _renderPoint(point) {
-       const pointComponent = new PointView(point);
-       const pointEditComponent = new EditPointView(point);
-
-       const replaceCardToForm = () => {
-          replace(pointEditComponent, pointComponent);
-        };
-
-       const replaceFormToCard = () => {
-          replace(pointComponent, pointEditComponent);
-        };
-
-        const onEscKeyDown = (evt) => {
-           if (evt.key === 'Escape' || evt.key === 'Esc') {
-            evt.preventDefault();
-            replaceFormToCard();
-            document.removeEventListener('keydown', onEscKeyDown);
-           } 
-        }
-
-        pointComponent.setEditClickHandler(() => {
-            replaceCardToForm();
-            document.addEventListener('keydown', onEscKeyDown);
-        });
-        
-        pointEditComponent.setFormSubmitHandler(() => {
-            replaceFormToCard();
-            document.removeEventListener('keydown', onEscKeyDown);
-        });
-    
-        render(this._eventsListComponent, pointComponent, RenderPosition.BEFOREEND);
+       const pointPresenter = new PointPresenter(this._eventsListComponent);
+       pointPresenter.init(point);
     };
 
 
@@ -68,11 +39,11 @@ export default class Trip {
     }
 
     _renderNoPoint() {
-        render(this._tripCompopent, this._renderNoPoint, RenderPosition.AFTERBEGIN);
+        render(this._tripComponent, this._noPointView, RenderPosition.BEFOREEND);
     }
 
     _renderTrip() {
-        if (this._tripPoints.length = 0) {
+        if (this._tripPoints.length < 1) {
             this._renderNoPoint();
             return;
         }

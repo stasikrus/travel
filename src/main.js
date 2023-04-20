@@ -27,7 +27,7 @@ render(tripInfo, new TripInfoView(points), RenderPosition.AFTERBEGIN);
 const coastTripInfo = tripInfo.querySelector('.trip-info');
 render(coastTripInfo, new TripCoastView(points), RenderPosition.BEFOREEND);
 
-const siteContainerElement = document.querySelector('.page-body__container');
+const siteContainerElement = document.querySelector('.page-main_container');
 
 const tripPresenter = new TripPresenter(siteContainerElement);
 tripPresenter.init(points);
