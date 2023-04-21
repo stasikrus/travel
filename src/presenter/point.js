@@ -1,6 +1,6 @@
 import PointView from "../view/point";
 import EditPointView from "../view/edit-point";
-import { render, RenderPosition, replace } from "../utils/render";
+import { remove, render, RenderPosition, replace } from "../utils/render";
 
 export default class PointPresenter {
     constructor(eventsListContainer) {
@@ -17,14 +17,35 @@ export default class PointPresenter {
     init(point) {
         this._point = point;
 
+        const prevPointComponent = this._pointComponent;
+        const prevEditComponent = this._pointEditComponent;
+
         this._pointComponent = new PointView(point);
         this._pointEditComponent = new EditPointView(point);
 
         this._pointComponent.setEditClickHandler(this._handleEditClick);
         this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
-        render(this._eventsListContainer, this._pointComponent, RenderPosition.BEFOREEND);
+        if (prevPointComponent === null || prevEditComponent === null) {
+            render(this._eventsListContainer, this._pointComponent, RenderPosition.BEFOREEND);
+            return;
+        }
 
+        if (this._eventsListContainer.getElement().contains(prevPointComponent.getElement())) {
+            replace(this._pointComponent, prevPointComponent);
+        }
+
+        if (this._eventsListContainer.getElement().contains(prevEditComponent.getElement())) {
+            replace(this._pointEditComponent, prevEditComponent);
+        }
+
+        remove(prevPointComponent);
+        remove(prevEditComponent);
+    }
+
+    _destroy() {
+        remove(this._pointComponent);
+        remove(this._pointEditComponent);
     }
 
     _replaceCardToForm() {

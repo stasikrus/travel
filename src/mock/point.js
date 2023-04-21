@@ -1,6 +1,7 @@
 import { getRandomElement, getRandomInteger } from "../utils";
 import { TYPES, DESTINATIONS, DESCRIPTIONS } from "../const";
 import dayjs from "dayjs";
+import {nanoid} from 'nanoid';
 
 const Period = {
     START_DATE_MIN: -7,
@@ -103,7 +104,7 @@ export const generatePoint = () => {
       "date_from": dateGenerator.dateFrom,
       "date_to": dateGenerator.dateTo,
       "destination": createDestination(),
-      "id": "0",
+      "id": nanoid(),
       "is_favorite": Boolean(getRandomInteger()),
       "offers": createOffers(),
       "type": getRandomElement(DESTINATIONS)

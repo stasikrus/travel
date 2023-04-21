@@ -8,6 +8,7 @@ import PointPresenter from "./point";
 export default class Trip {
     constructor(tripContainer) {
         this._tripContainer = tripContainer;
+        this._pointPresenter = {};
         
         this._tripComponent = new TripView(); 
         this._sortComponent = new TripSortView();
@@ -31,6 +32,8 @@ export default class Trip {
     _renderPoint(point) {
        const pointPresenter = new PointPresenter(this._eventsListComponent);
        pointPresenter.init(point);
+       this._pointPresenter[point.id] = pointPresenter;
+       console.log(this._pointPresenter)
     };
 
 
@@ -40,6 +43,13 @@ export default class Trip {
 
     _renderNoPoint() {
         render(this._tripComponent, this._noPointView, RenderPosition.BEFOREEND);
+    }
+
+    _clearPointList() {
+        Object
+          .values(this._pointPresenter)
+          .forEach((presenter) => presenter.destroy());
+        this._pointPresenter = {};  
     }
 
     _renderTrip() {
