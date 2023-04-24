@@ -2,13 +2,21 @@ import PointView from "../view/point";
 import EditPointView from "../view/edit-point";
 import { remove, render, RenderPosition, replace } from "../utils/render";
 
+const Mode = {
+    DEFAULT: 'DEFAULT',
+    EDITING: 'EDITING',
+};
+
 export default class PointPresenter {
-    constructor(eventsListContainer, changeData) {
+    constructor(eventsListContainer, changeData, changeMode) {
         this._eventsListContainer = eventsListContainer;
         this._changeData = changeData;
+        this._changeMode = changeMode;
 
         this._pointComponent = null;
         this._pointEditComponent = null;
+        this._mode = Mode.DEFAULT;
+
 
         this._handleEditClick = this._handleEditClick.bind(this);
         this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -34,11 +42,11 @@ export default class PointPresenter {
             return;
         }
 
-        if (this._eventsListContainer.getElement().contains(prevPointComponent.getElement())) {
+        if (this._mode === Mode.DEFAULT) {
             replace(this._pointComponent, prevPointComponent);
         }
 
-        if (this._eventsListContainer.getElement().contains(prevEditComponent.getElement())) {
+        if (this._mode === Mode.EDITING) {
             replace(this._pointEditComponent, prevEditComponent);
         }
 
@@ -51,14 +59,23 @@ export default class PointPresenter {
         remove(this._pointEditComponent);
     }
 
+    resetView() {
+        if (this._mode !== Mode.DEFAULT) {
+            this._replaceFormToCard();
+        }
+    }
+
     _replaceCardToForm() {
         replace(this._pointEditComponent, this._pointComponent);
         document.addEventListener('keydown', this._escKeyDownHandler);
+        this._changeMode();
+        this._mode = Mode.EDITING;
     }
 
     _replaceFormToCard() {
         replace(this._pointComponent, this._pointEditComponent);
         document.removeEventListener('keydown', this._escKeyDownHandler);
+        this._mode = Mode.DEFAULT;
     }
 
     _escKeyDownHandler(evt) {
