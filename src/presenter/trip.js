@@ -4,7 +4,7 @@ import NoPointView from "../view/no-point";
 import TripView from "../view/trip";
 import { render, RenderPosition } from "../utils/render";
 import PointPresenter from "./point";
-import { updateItem } from "../utils";
+import { updateItem, sortPointPrice } from "../utils";
 import { SortType } from "../const";
 
 export default class Trip {
@@ -48,12 +48,12 @@ export default class Trip {
     _sortPoints(sortType) {
         switch (sortType) {
             case SortType.TIME:
-                this._tripPoints.sort(sortPointTime);
+                this._tripPoints.sort();
                 break;
             case SortType.PRICE:
-                this._tripPoints.sort(sortPointPrice);
+                this._tripPoints.sort();
                 break;
-            case SortType.DAY:
+            default:
                 this._tripPoints = this._sourcedTripPoints.slice();        
         }
 
@@ -66,7 +66,10 @@ export default class Trip {
         }
 
         this._sortPoints(sortType);
+        this._clearPointList();
+        this._renderPoints();
     };
+
 
     _renderSort() {
         render(this._tripComponent, this._sortComponent, RenderPosition.AFTERBEGIN);

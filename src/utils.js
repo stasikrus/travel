@@ -35,4 +35,8 @@ export const updateItem = (items, update) => {
     ];
   };
 
+  export const sortPointPrice = (a, b) => {
+    return a > b;
+  }
+
 export { getRandomInteger, getRandomElement };
