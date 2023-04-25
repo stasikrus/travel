@@ -5,11 +5,13 @@ import TripView from "../view/trip";
 import { render, RenderPosition } from "../utils/render";
 import PointPresenter from "./point";
 import { updateItem } from "../utils";
+import { SortType } from "../const";
 
 export default class Trip {
     constructor(tripContainer) {
         this._tripContainer = tripContainer;
         this._pointPresenter = {};
+        this._currentSortType = SortType.DAY;
         
         this._tripComponent = new TripView(); 
         this._sortComponent = new TripSortView();
@@ -22,6 +24,7 @@ export default class Trip {
 
     init(tripPoints) {
         this._tripPoints = tripPoints.slice();
+        this._sourcedTripPoints = tripPoints.slice();
 
         render(this._tripContainer, this._tripComponent, RenderPosition.BEFOREEND);
         render(this._tripComponent, this._eventsListComponent, RenderPosition.BEFOREEND);
@@ -38,11 +41,36 @@ export default class Trip {
 
     _handlePointChange(updatePoint) {
         this._tripPoints = updateItem(this._tripPoints, updatePoint);
+        this._sourcedTripPoints = updateItem(this._sourcedTripPoints, updatePoint);
         this._pointPresenter[updatePoint.id].init(updatePoint);
     }
 
+    _sortPoints(sortType) {
+        switch (sortType) {
+            case SortType.TIME:
+                this._tripPoints.sort(sortPointTime);
+                break;
+            case SortType.PRICE:
+                this._tripPoints.sort(sortPointPrice);
+                break;
+            case SortType.DAY:
+                this._tripPoints = this._sourcedTripPoints.slice();        
+        }
+
+        this._currentSortType = sortType;
+    }
+
+    _handleSortTypeChange(sortType) {
+        if (this._currentSortType === sortType) {
+            return;
+        }
+
+        this._sortPoints(sortType);
+    };
+
     _renderSort() {
         render(this._tripComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
+        this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
     }
 
     _renderPoint(point) {

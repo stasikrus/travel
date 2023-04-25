@@ -12,5 +12,10 @@ const DESCRIPTIONS = [
     'In rutrum ac purus sit amet tempus.',
 ];
 
+const SortType = {
+    DAY: 'day',
+    TIME: 'time',
+    PRICE: 'price',
+};
 
-export { TYPES, DESTINATIONS, DESCRIPTIONS };
+export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType };
