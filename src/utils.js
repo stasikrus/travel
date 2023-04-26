@@ -33,10 +33,10 @@ export const updateItem = (items, update) => {
       update,
       ...items.slice(index + 1),
     ];
-  };
+};
 
-  export const sortPointPrice = (a, b) => {
-    return a > b;
-  }
+export const sortPointPrice = (a, b) => {
+  return b.base_price - a.base_price;
+}
 
 export { getRandomInteger, getRandomElement };

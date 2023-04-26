@@ -20,6 +20,7 @@ export default class Trip {
 
         this._handlePointChange = this._handlePointChange.bind(this);
         this._handleModeChange = this._handleModeChange.bind(this);
+        this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     }
 
     init(tripPoints) {
@@ -51,10 +52,11 @@ export default class Trip {
                 this._tripPoints.sort();
                 break;
             case SortType.PRICE:
-                this._tripPoints.sort();
+                this._tripPoints.sort(sortPointPrice);
                 break;
-            default:
-                this._tripPoints = this._sourcedTripPoints.slice();        
+            case SortType.DAY:
+                this._tripPoints = this._sourcedTripPoints.slice();
+                break;        
         }
 
         this._currentSortType = sortType;
@@ -95,7 +97,7 @@ export default class Trip {
     _clearPointList() {
         Object
           .values(this._pointPresenter)
-          .forEach((presenter) => presenter.destroy());
+          .forEach((presenter) => presenter._destroy());
         this._pointPresenter = {};  
     }
 

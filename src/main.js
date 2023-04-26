@@ -34,3 +34,4 @@ tripPresenter.init(points);
 
 
 console.log(points);
+
