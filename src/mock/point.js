@@ -99,10 +99,11 @@ const dateGenerator = createDateGenerator();
 
 
 export const generatePoint = () => {
+    const generatedDates = dateGenerator();
     return {
       "base_price": getRandomInteger(Period.BASE_PRICE_MIN, Period.BASE_PRICE_MAX),
-      "date_from": dateGenerator.dateFrom,
-      "date_to": dateGenerator.dateTo,
+      "date_from": generatedDates.dateFrom,
+      "date_to": generatedDates.dateTo,
       "destination": createDestination(),
       "id": nanoid(),
       "is_favorite": Boolean(getRandomInteger()),

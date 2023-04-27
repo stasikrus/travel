@@ -4,7 +4,7 @@ import NoPointView from "../view/no-point";
 import TripView from "../view/trip";
 import { render, RenderPosition } from "../utils/render";
 import PointPresenter from "./point";
-import { updateItem, sortPointPrice } from "../utils";
+import { updateItem, sortPointPrice, sortedEvents } from "../utils";
 import { SortType } from "../const";
 
 export default class Trip {
@@ -49,7 +49,7 @@ export default class Trip {
     _sortPoints(sortType) {
         switch (sortType) {
             case SortType.TIME:
-                this._tripPoints.sort();
+                this._tripPoints.sort(sortedEvents);
                 break;
             case SortType.PRICE:
                 this._tripPoints.sort(sortPointPrice);

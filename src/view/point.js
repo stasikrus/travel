@@ -1,4 +1,8 @@
 import AbstractView from "./abstract";
+import dayjs from "dayjs";
+import duration from 'dayjs/plugin/duration';
+
+dayjs.extend(duration);
 
 const createPointOfferTemplate = (offers) => {
   return offers.length > 0 ? `${offers.map(({offer, price}) => `<li
@@ -10,26 +14,35 @@ const createPointOfferTemplate = (offers) => {
     : '';
 };
 
+const getDuration = (dateFrom, dateTo) => {
+  const duration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom)));
+  const days = duration.days();
+  const hours = duration.hours();
+  const minutes = duration.minutes();
+  return `${days}D ${hours}H ${minutes}M`;
+};
 
-const createPointTrip = ({type, is_favorite, base_price, offers: {type: event, offers}}) => {
+
+
+const createPointTrip = ({type, is_favorite, base_price, offers: {type: event, offers}, date_from, date_to}) => {
   
   const favoriteClassBtn = is_favorite ? 'event__favorite-btn--active' : '';
   
 
     return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="2019-03-18">MAR 18</time>
+      <time class="event__date" datetime="${dayjs(date_from).format('YYYY-MM-DD')}">${dayjs(date_from).format('DD-MMM')}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${event}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${event} ${type}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+          <time class="event__start-time" datetime="${dayjs(date_from).format('YYYY-MM-DD[T]HH:mm')}">${dayjs(date_from).format('HH:mm')}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+          <time class="event__end-time" datetime="${dayjs(date_to).format('YYYY-MM-DD[T]HH:mm')}">${dayjs(date_to).format('HH:mm')}</time>
         </p>
-        <p class="event__duration">30M</p>
+        <p class="event__duration">${getDuration(date_from, date_to)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${base_price}</span>
