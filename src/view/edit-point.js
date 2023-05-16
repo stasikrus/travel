@@ -158,4 +158,12 @@ export default class EditPoint extends AbstractView {
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
+  static parsePointDataToState(pointData) {
+    return Object.assign({}, pointData);
+  }
+
+  static parsePointStateToDate(state) {
+    return Object.assign({}, state) ;
+  }
+
 }
