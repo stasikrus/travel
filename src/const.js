@@ -18,4 +18,27 @@ const SortType = {
     PRICE: 'price',
 };
 
-export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType };
+const OFFERS = [
+    {
+        offer: 'Add luggage',
+        price: 50,
+    },
+    {
+        offer: 'Switch to comfort',
+        price: 80,
+    },
+    {
+        offer: 'Add meal',
+        price: 80,
+    },
+    {
+        offer: 'Choose seats',
+        price: 5,
+    },
+    {
+        offer: 'Travel by train',
+        price: 40,
+    },
+];;
+
+export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType, OFFERS};

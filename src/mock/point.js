@@ -1,5 +1,5 @@
 import { getRandomElement, getRandomInteger } from "../utils";
-import { TYPES, DESTINATIONS, DESCRIPTIONS } from "../const";
+import { TYPES, DESTINATIONS, DESCRIPTIONS, OFFERS } from "../const";
 import dayjs from "dayjs";
 import {nanoid} from 'nanoid';
 
@@ -13,30 +13,6 @@ const Period = {
     BASE_PRICE_MIN: 20,
     BASE_PRICE_MAX: 1500,
 }
-
-const offers = [
-    {
-        offer: 'Add luggage',
-        price: 50,
-    },
-    {
-        offer: 'Switch to comfort',
-        price: 80,
-    },
-    {
-        offer: 'Add meal',
-        price: 80,
-    },
-    {
-        offer: 'Choose seats',
-        price: 5,
-    },
-    {
-        offer: 'Travel by train',
-        price: 40,
-    },
-];
-
 
 const createDestination = () => {
 
@@ -75,7 +51,7 @@ const createOffers = () => {
     
 
     for (let i = 0; i < getRandomInteger(0, 5); i++) {
-        offersList.offers.push(getRandomElement(offers));
+        offersList.offers.push(getRandomElement(OFFERS));
     };
 
     return offersList;

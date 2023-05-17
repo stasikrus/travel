@@ -1,6 +1,6 @@
-import { TYPES, DESTINATIONS } from "../const";
-import { getRandomElement } from "../utils";
-import AbstractView from "./abstract";
+import { TYPES, DESTINATIONS, OFFERS } from "../const";
+import { getRandomElement, getRandomInteger } from "../utils";
+import SmartView from "./smart";
 
 const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
   return avaibleTypes.map((type) => `<div class="event__type-item">
@@ -13,6 +13,26 @@ const createDestinationsOptionTemplate = (cities) => {
   return cities.map((city) => `<option value=${city}></option>`).join("");
 };
 
+const createEventOfferTemplate = ({offers: {offers}}) => {
+  return offers.length > 0 ?
+    `<section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+    <div class="event__available-offers">
+    ${offers.map(({ offer, price }) => {
+      const offerClassName = offer.split(' ').pop();
+      const checkedAttribute = getRandomInteger() ? 'checked' : '';
+      return `<div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${checkedAttribute}>
+    <label class="event__offer-label" for="event-offer-${offerClassName}-1">
+    <span class="event__offer-title">${offer}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${price}</span>
+    </label>
+    </div>`;
+    }).join('')}
+    </div></section>` : '';
+};
+
 const createPhotoContainer = ({destination: {pictures}}) => {
   return pictures.length > 0 ? `<div class="event__photos-container">
   <div class="event__photos-tape">
@@ -20,6 +40,14 @@ const createPhotoContainer = ({destination: {pictures}}) => {
   </div>
   </div>`
   : '';
+};
+
+const createEventDestinationTemplate = (destination) => {
+  return destination.descriptions.length > 0 || destination.pictures.length > 0 ? `<section class="event__section  event__section--destination">
+  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+  <p class="event__destination-description">${destination.descriptions}</p>
+  ${createPhotoContainer(destination)}
+</section>` : ''; 
 };
 
 
@@ -78,50 +106,7 @@ const createEditPoint = (destination) => {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-              <label class="event__offer-label" for="event-offer-luggage-1">
-                <span class="event__offer-title">Add luggage</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">30</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-              <label class="event__offer-label" for="event-offer-comfort-1">
-                <span class="event__offer-title">Switch to comfort class</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">100</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-              <label class="event__offer-label" for="event-offer-meal-1">
-                <span class="event__offer-title">Add meal</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">15</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-              <label class="event__offer-label" for="event-offer-seats-1">
-                <span class="event__offer-title">Choose seats</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">5</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-              <label class="event__offer-label" for="event-offer-train-1">
-                <span class="event__offer-title">Travel by train</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">40</span>
-              </label>
-            </div>
+            ${createEventOfferTemplate(destination)}
           </div>
         </section>
 
@@ -136,21 +121,21 @@ const createEditPoint = (destination) => {
   </li>`
 };
 
-export default class EditPoint extends AbstractView {
+export default class EditPoint extends SmartView {
   constructor(destination) {
     super()
-    this._destination = destination;
+    this._pointState = EditPoint.parsePointDataToState(destination); // ПРОВЕРИТЬ ЗАВИСИМОСТИ!!
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditPoint(this._destination);
+    return createEditPoint(this._pointState);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._destination);
+    this._callback.formSubmit(EditPoint.parsePointStateToDate(this._pointState));
   }
 
   setFormSubmitHandler(callback) {
@@ -164,6 +149,10 @@ export default class EditPoint extends AbstractView {
 
   static parsePointStateToDate(state) {
     return Object.assign({}, state) ;
+  }
+
+  restoreHandlers() {
+    // Реализовать позже
   }
 
 }
