@@ -68,7 +68,7 @@ export default class Point extends AbstractView {
   constructor(data) {
     super();
     this._data = data;
-
+    
     this._editClickHandler = this._editClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }

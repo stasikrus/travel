@@ -125,8 +125,13 @@ export default class EditPoint extends SmartView {
   constructor(destination) {
     super()
     this._pointState = EditPoint.parsePointDataToState(destination); // ПРОВЕРИТЬ ЗАВИСИМОСТИ!!
-
+    this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    //this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+
+    this.getElement().querySelector('.event__type-group').addEventListener('change', this._eventTypeChangeHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._destinationChangeHandler);
+
   }
 
   getTemplate() {
@@ -150,6 +155,22 @@ export default class EditPoint extends SmartView {
   static parsePointStateToDate(state) {
     return Object.assign({}, state) ;
   }
+
+  _eventTypeChangeHandler(evt) {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+
+    this.updateData({
+      offers: {
+        type: evt.target.value,
+        offers: {
+          offer: "Cas To",
+        }
+      }
+    });
+  }
+  
 
   restoreHandlers() {
     // Реализовать позже
