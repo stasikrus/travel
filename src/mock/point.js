@@ -83,7 +83,7 @@ export const generatePoint = () => {
       "destination": createDestination(),
       "id": nanoid(),
       "is_favorite": Boolean(getRandomInteger()),
-      "offers": createOffers(),
-      "type": getRandomElement(DESTINATIONS)
+      "type": getRandomElement(TYPES),
+      "city": getRandomElement(DESTINATIONS)
     };
 };

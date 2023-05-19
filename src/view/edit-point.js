@@ -3,7 +3,7 @@ import { getRandomElement, getRandomInteger } from "../utils";
 import SmartView from "./smart";
 
 const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
-  return avaibleTypes.map((type) => `<div class="event__type-item">
+  return avaibleTypes.map(({type: type}) => `<div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type} ${type === currentType ? 'checked' : ''}">
   <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
   </div>`,).join('');
@@ -13,24 +13,32 @@ const createDestinationsOptionTemplate = (cities) => {
   return cities.map((city) => `<option value=${city}></option>`).join("");
 };
 
-const createEventOfferTemplate = ({offers: {offers}}) => {
-  return offers.length > 0 ?
-    `<section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-    <div class="event__available-offers">
-    ${offers.map(({ offer, price }) => {
-      const offerClassName = offer.split(' ').pop();
-      const checkedAttribute = getRandomInteger() ? 'checked' : '';
-      return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${checkedAttribute}>
-    <label class="event__offer-label" for="event-offer-${offerClassName}-1">
-    <span class="event__offer-title">${offer}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${price}</span>
-    </label>
-    </div>`;
-    }).join('')}
-    </div></section>` : '';
+const createEventOfferTemplate = ({ type: { offers } }) => {
+  if (offers.length > 0) {
+    const offerTemplate = offers
+      .map(({ offer, price }) => {
+        const offerClassName = offer.split(' ').pop();
+        const checkedAttribute = getRandomInteger() ? 'checked' : '';
+        return `<div class="event__offer-selector">
+          <input class="event__offer-checkbox visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${checkedAttribute}>
+          <label class="event__offer-label" for="event-offer-${offerClassName}-1">
+            <span class="event__offer-title">${offer}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${price}</span>
+          </label>
+        </div>`;
+      })
+      .join('');
+
+    return `<section class="event__section event__section--offers">
+      <h3 class="event__section-title event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${offerTemplate}
+      </div>
+    </section>`;
+  }
+
+  return '';
 };
 
 const createPhotoContainer = ({destination: {pictures}}) => {
@@ -59,14 +67,14 @@ const createEditPoint = (destination) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${randomEvent}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${destination.type.type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${createEventTypeItemTemplate(TYPES, randomEvent)};
+              ${createEventTypeItemTemplate(TYPES, randomEvent.type)};
 
             </fieldset>
           </div>
@@ -101,19 +109,12 @@ const createEditPoint = (destination) => {
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
-      <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
-            ${createEventOfferTemplate(destination)}
-          </div>
-        </section>
-
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
+      <section class="event__details">     
+        ${createEventOfferTemplate(destination)}    
+      </section>
+      <section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
           ${createPhotoContainer(destination)}
         </section>
       </section>
@@ -161,15 +162,34 @@ export default class EditPoint extends SmartView {
       return;
     }
 
+
+  
+    const selectedTypeObject = TYPES.find(obj => obj.type === evt.target.value.trim());
+
+  
+    const findSelectedOffers = () => {
+      if (selectedTypeObject) {
+        return selectedTypeObject.offers.map(({ offer, price }) => ({ offer, price }));
+      }
+      return [];
+    }
+
+    console.log(evt.target.value);
+    console.log(selectedTypeObject);
+    console.log(findSelectedOffers());
+    console.log(`'${evt.target.value.trim()}'`)
+
+
+  
     this.updateData({
-      offers: {
+      type: {
         type: evt.target.value,
-        offers: {
-          offer: "Cas To",
-        }
+        offers: findSelectedOffers()
       }
     });
   }
+  
+  
   
 
   restoreHandlers() {
