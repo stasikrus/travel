@@ -1,7 +1,7 @@
 import AbstractView from "./abstract";
 
 const getRoute = (randomPoints) => {
-  const uniqueCityList = new Set(randomPoints.map(({destination}) => destination.name));
+  const uniqueCityList = new Set(randomPoints.map(({city}) => city.city));
   const totalRoute = Array.from(uniqueCityList).join(' &mdash; ');
 
   return totalRoute;

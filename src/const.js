@@ -76,8 +76,34 @@ const TYPES = [
   ];
 
 
-//const TYPES = ['taxi','bus','train','ship','transport','drive','flight','check-in','sightseeing','restaurant'];
-const DESTINATIONS = ['Moscow','Paris','Madrid','Minsk','London'];
+const DESTINATIONS = [
+  {
+    city: 'Moscow',
+    description: 'Moscow fermentum tortor ac porta dapibus.',
+    photo: ['http://picsum.photos/248/152?r=10', 'http://picsum.photos/248/152?r=1'],
+  },
+  {
+    city: 'Paris',
+    description: 'Paris fermentum tortor ac porta dapibus.',
+    photo: ['http://picsum.photos/248/152?r=2', 'http://picsum.photos/248/152?r=7'],
+  },
+  {
+      city: 'Madrid',
+      description: 'Madrid fermentum tortor ac porta dapibus.',
+      photo: ['http://picsum.photos/248/152?r=4', 'http://picsum.photos/248/152?r=6'],
+    },
+    {
+      city: 'Minsk',
+      description: 'Minsk fermentum tortor ac porta dapibus.',
+      photo: ['http://picsum.photos/248/152?r=5', 'http://picsum.photos/248/152?r=9'],
+    },
+    {
+      city: 'London',
+      description: 'London fermentum tortor ac porta dapibus.',
+      photo: ['http://picsum.photos/248/152?r=4', 'http://picsum.photos/248/152?r=9'],
+    },
+]  
+
 const DESCRIPTIONS = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     'Cras aliquet varius magna, non porta ligula feugiat eget.','Fusce tristique felis at fermentum pharetra.',

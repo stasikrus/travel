@@ -10,7 +10,7 @@ const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
 }
 
 const createDestinationsOptionTemplate = (cities) => {
-  return cities.map((city) => `<option value=${city}></option>`).join("");
+  return cities.map(({city}) => `<option value=${city}></option>`).join("");
 };
 
 const createEventOfferTemplate = ({ type: { offers } }) => {
@@ -41,7 +41,7 @@ const createEventOfferTemplate = ({ type: { offers } }) => {
   return '';
 };
 
-const createPhotoContainer = ({destination: {pictures}}) => {
+const createPhotoContainer = (pictures) => {
   return pictures.length > 0 ? `<div class="event__photos-container">
   <div class="event__photos-tape">
      ${pictures.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join("")} 
@@ -50,12 +50,12 @@ const createPhotoContainer = ({destination: {pictures}}) => {
   : '';
 };
 
-const createEventDestinationTemplate = (destination) => {
-  return destination.descriptions.length > 0 || destination.pictures.length > 0 ? `<section class="event__section  event__section--destination">
+const createEventDestinationTemplate = ({city: {description, photo}}) => {
+  return `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-  <p class="event__destination-description">${destination.descriptions}</p>
-  ${createPhotoContainer(destination)}
-</section>` : ''; 
+  <p class="event__destination-description">${description}</p>
+  ${createPhotoContainer(photo)}
+</section>`; 
 };
 
 
@@ -112,11 +112,7 @@ const createEditPoint = (destination) => {
       <section class="event__details">     
         ${createEventOfferTemplate(destination)}    
       </section>
-      <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-          ${createPhotoContainer(destination)}
-        </section>
+      ${createEventDestinationTemplate(destination)}
       </section>
     </form>
   </li>`
@@ -127,11 +123,10 @@ export default class EditPoint extends SmartView {
     super()
     this._pointState = EditPoint.parsePointDataToState(destination); // ПРОВЕРИТЬ ЗАВИСИМОСТИ!!
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
-    //this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+    this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
 
-    this.getElement().querySelector('.event__type-group').addEventListener('change', this._eventTypeChangeHandler);
-    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._destinationChangeHandler);
+    this._setInnerHandlers();
 
   }
 
@@ -161,12 +156,8 @@ export default class EditPoint extends SmartView {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
-
-
-  
     const selectedTypeObject = TYPES.find(obj => obj.type === evt.target.value.trim());
 
-  
     const findSelectedOffers = () => {
       if (selectedTypeObject) {
         return selectedTypeObject.offers.map(({ offer, price }) => ({ offer, price }));
@@ -188,12 +179,37 @@ export default class EditPoint extends SmartView {
       }
     });
   }
-  
-  
-  
 
+  _destinationChangeHandler(evt) {
+    if (!DESTINATIONS.some(obj => obj.city === evt.target.value)) {
+      return;
+    }
+
+    evt.preventDefault();
+    
+    
+    const selectedTypeObject = DESTINATIONS.find(obj => obj.city === evt.target.value);
+
+    console.log(selectedTypeObject);
+
+    if (selectedTypeObject) {
+      this.updateData({
+        city: {
+          city: evt.target.value,
+          description: selectedTypeObject.description,
+          photo: selectedTypeObject.photo,
+        }
+      });
+    }
+  }
+  
   restoreHandlers() {
-    // Реализовать позже
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this._setInnerHandlers();
   }
 
+  _setInnerHandlers() {
+    this.getElement().querySelector('.event__type-group').addEventListener('change', this._eventTypeChangeHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._destinationChangeHandler);
+  }
 }
