@@ -1,6 +1,11 @@
-import { TYPES, DESTINATIONS, OFFERS } from "../const";
+import { TYPES, DESTINATIONS, compareTwoDates } from "../const";
 import { getRandomElement, getRandomInteger } from "../utils";
 import SmartView from "./smart";
+import dayjs from "dayjs";
+import flatpickr from 'flatpickr';
+
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
   return avaibleTypes.map(({type: type}) => `<div class="event__type-item">
@@ -8,6 +13,11 @@ const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
   <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
   </div>`,).join('');
 }
+
+const formatDate = (dateString) => {
+  const formattedDate = dayjs(dateString).format('DD/MM/YY HH:mm');
+  return formattedDate;
+} 
 
 const createDestinationsOptionTemplate = (cities) => {
   return cities.map(({city}) => `<option value=${city}></option>`).join("");
@@ -82,9 +92,9 @@ const createEditPoint = (destination) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            Flight
+            ${destination.type.type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city.city}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${createDestinationsOptionTemplate(DESTINATIONS)}
           </datalist>
@@ -92,10 +102,10 @@ const createEditPoint = (destination) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(destination.date_from)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(destination.date_to)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -125,8 +135,14 @@ export default class EditPoint extends SmartView {
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._datePickerStartDate = null;
+    this._datePickerEndDate = null;
+    this._onDateFromChange = this._onDateFromChange.bind(this);
+    this._onDateToChange = this._onDateToChange.bind(this);
 
     this._setInnerHandlers();
+    this._setDatePickerStart(this._datePickerStartDate);
+    this._setDatePickerEnd(this._datePickerEndDate);
 
   }
 
@@ -164,17 +180,10 @@ export default class EditPoint extends SmartView {
       }
       return [];
     }
-
-    console.log(evt.target.value);
-    console.log(selectedTypeObject);
-    console.log(findSelectedOffers());
-    console.log(`'${evt.target.value.trim()}'`)
-
-
   
     this.updateData({
       type: {
-        type: evt.target.value,
+        type: evt.target.value.trim(),
         offers: findSelectedOffers()
       }
     });
@@ -187,10 +196,7 @@ export default class EditPoint extends SmartView {
 
     evt.preventDefault();
     
-    
     const selectedTypeObject = DESTINATIONS.find(obj => obj.city === evt.target.value);
-
-    console.log(selectedTypeObject);
 
     if (selectedTypeObject) {
       this.updateData({
@@ -202,14 +208,74 @@ export default class EditPoint extends SmartView {
       });
     }
   }
+
   
   restoreHandlers() {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this._setInnerHandlers();
+    this._setDatePickerStart(this._datePickerStartDate);
+    this._setDatePickerEnd(this._datePickerEndDate);
   }
 
   _setInnerHandlers() {
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._eventTypeChangeHandler);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._destinationChangeHandler);
   }
+
+  _setDatePickerStart(datePicker) {
+    if (datePicker) {
+      datePicker.destroy();
+      datePicker = null;
+    }
+
+    datePicker = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._pointState.date_from,
+        onChange: this._onDateFromChange,
+      },
+    );
+  }
+
+  _setDatePickerEnd(datePicker) {
+    if (datePicker) {
+      datePicker.destroy();
+      datePicker = null;
+    }
+
+    datePicker = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._pointState.date_to,
+        onChange: this._onDateFromChange,
+      },
+    );
+  }
+
+
+  _onDateFromChange(userInput) {
+    if (compareTwoDates(this._pointState.date_to, userInput) < 0) {
+      this.updateData({
+        date_from: userInput,
+        date_to: userInput,
+      });
+      return;
+    }
+    this.updateData({
+      date_from: userInput,
+    });
+  }
+
+  _onDateToChange(userInput) {
+    if (compareTwoDates(userInput, this._pointState.date_from) < 0) {
+      userInput = this._pointState.date_from;
+    }
+    this.updateData({
+      date_to: userInput,
+    });
+  }
+
+
 }

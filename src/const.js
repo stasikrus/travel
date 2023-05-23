@@ -1,3 +1,8 @@
+import dayjs from "dayjs";
+
+export const compareTwoDates = (dateA, dateB) => dayjs(dateA).diff(dateB);
+
+
 const TYPES = [
     {
       type: 'taxi',
