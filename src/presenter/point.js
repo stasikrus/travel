@@ -1,6 +1,8 @@
 import PointView from "../view/point";
 import EditPointView from "../view/edit-point";
 import { remove, render, RenderPosition, replace } from "../utils/render";
+import { UserAction, UpdateType } from "../const";
+
 
 const Mode = {
     DEFAULT: 'DEFAULT',
@@ -36,6 +38,7 @@ export default class PointPresenter {
         this._pointComponent.setEditClickHandler(this._handleEditClick);
         this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick)
         this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+        this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
         if (prevPointComponent === null || prevEditComponent === null) {
             render(this._eventsListContainer, this._pointComponent, RenderPosition.BEFOREEND);
@@ -92,6 +95,8 @@ export default class PointPresenter {
     
     _handleFavoriteClick() {
         this._changeData(
+          UserAction.UPDATE_POINT,
+          UpdateType.MINOR,  
           Object.assign(
             {},
             this._point,
@@ -102,9 +107,26 @@ export default class PointPresenter {
         );
     }
     
-    _handleFormSubmit(point) {
-        this._changeData(point);
+    _handleFormSubmit(update) {
+        const isMinorUpdate = 
+          this._point.date_from !== update.date_from || 
+          this._point.date_to !== update.date_to || 
+          this._point.type.type !== update.type.type;
+
+          
+        this._changeData(
+            UserAction.UPDATE_POINT,
+            isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+            point);
         this._replaceFormToCard();
+    }
+
+    _handleDeleteClick(point) {
+        this._changeData(
+            UserAction.DELETE_POINT,
+            UpdateType.MINOR,
+            point,
+        )
     }
 
 

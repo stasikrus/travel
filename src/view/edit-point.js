@@ -117,7 +117,7 @@ const createEditPoint = (destination) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__reset-btn" type="reset">Delete</button>
       </header>
       <section class="event__details">     
         ${createEventOfferTemplate(destination)}    
@@ -135,6 +135,7 @@ export default class EditPoint extends SmartView {
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._datePickerStartDate = null;
     this._datePickerEndDate = null;
     this._onDateFromChange = this._onDateFromChange.bind(this);
@@ -143,6 +144,21 @@ export default class EditPoint extends SmartView {
     this._setInnerHandlers();
     this._setDatePickerStart(this._datePickerStartDate);
     this._setDatePickerEnd(this._datePickerEndDate);
+
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datePickerStartDate) {
+      this._datePickerStartDate.destroy();
+      this._datePickerStartDate = null;
+    }
+
+    if (this._datePickerEndDate) {
+      this._datePickerEndDate.destroy();
+      this._datePickerEndDate = null;
+    }
 
   }
 
@@ -158,6 +174,16 @@ export default class EditPoint extends SmartView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditPoint.parsePointStateToDate(this._pointState));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   static parsePointDataToState(pointData) {
@@ -212,9 +238,11 @@ export default class EditPoint extends SmartView {
   
   restoreHandlers() {
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._setInnerHandlers();
     this._setDatePickerStart(this._datePickerStartDate);
     this._setDatePickerEnd(this._datePickerEndDate);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setInnerHandlers() {
