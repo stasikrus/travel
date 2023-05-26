@@ -127,6 +127,12 @@ const SortType = {
     PRICE: 'price',
 };
 
+const FilterType = {
+  EVERYTHING: 'EVERYTHING',
+  FUTURE: 'FUTURE',
+  PAST: 'PAST',
+};
+
 const OFFERS = [
     {
         offer: 'Add luggage',
@@ -162,4 +168,4 @@ export const UpdateType = {
   MAJOR: 'MAJOR',
 }
 
-export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType, OFFERS};
+export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType, OFFERS, FilterType};
