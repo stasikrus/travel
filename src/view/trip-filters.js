@@ -25,7 +25,7 @@ const createTripFilters = (filter, currentFilterType) => {
 export default class TripFilters extends AbstractView {
   constructor(filters, currentFilterType) {
     super();
-    this_filters = filters;
+    this._filters = filters;
     this._currentFilter = currentFilterType;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
@@ -33,7 +33,7 @@ export default class TripFilters extends AbstractView {
 
 
   getTemplate() {
-    return createTripFilters(this_filters, this._currentFilter);
+    return createTripFilters(this._filters, this._currentFilter);
   }
 
   _filterTypeChangeHandler(evt) {
