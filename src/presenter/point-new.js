@@ -4,9 +4,10 @@ import { remove, render, RenderPosition } from "../utils/render";
 import { UserAction, UpdateType } from "../const";
 
 export default class PointNew {
-    constructor(pointListContainer, changeData) {
+    constructor(pointListContainer, changeData, randomDataNewPoint) {
         this._pointListContainer = pointListContainer;
         this._changeData = changeData;
+        this._randomDataNewPoint = randomDataNewPoint;
 
         this._pointEditComponent = null;
 
@@ -20,7 +21,7 @@ export default class PointNew {
             return;
         }
 
-        this._pointEditComponent = new EditPointView();
+        this._pointEditComponent = new EditPointView(this._randomDataNewPoint);
         this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
         this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -28,6 +29,17 @@ export default class PointNew {
         render(this._pointListContainer, this._pointEditComponent, RenderPosition.AFTERBEGIN);
 
         document.addEventListener('keydown', this._escKeyDownHandler);
+    }
+
+    destroy() {
+        if (this._pointEditComponent === null) {
+          return;
+        }
+    
+        remove(this._pointEditComponent);
+        this._pointEditComponent = null;
+    
+        document.removeEventListener('keydown', this._escKeyDownHandler);
     }
 
     _handleFormSubmit(point) {

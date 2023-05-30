@@ -2,6 +2,10 @@ import dayjs from "dayjs";
 
 export const compareTwoDates = (dateA, dateB) => dayjs(dateA).diff(dateB);
 
+export const MenuItem = {
+  TABLE: 'TABLE',
+  STATS: 'STATS',
+};
 
 const TYPES = [
     {

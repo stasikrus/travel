@@ -118,7 +118,7 @@ export default class PointPresenter {
         this._changeData(
             UserAction.UPDATE_POINT,
             isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-            point);
+            update);
         this._replaceFormToCard();
     }
 

@@ -10,7 +10,7 @@ import { SortType, UpdateType, UserAction, FilterType } from "../const";
 import { filter } from "../utils/filter";
 
 export default class Trip {
-    constructor(tripContainer, pointsModel, filterModel) {
+    constructor(tripContainer, pointsModel, filterModel, randomDataNewPoint) {
         this._tripContainer = tripContainer;
         this._pointsModel = pointsModel;
         this._filterModel = filterModel;
@@ -28,19 +28,30 @@ export default class Trip {
         this._handleModeChange = this._handleModeChange.bind(this);
         this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-        this._pointsModel.addObserver(this._handleModelEvent);
-        this._filterModel.addObserver(this._handleModelEvent);
+        
 
-        this._pointNewPresenter = new PointNewPresenter(this._eventsListComponent, this._handleViewAction);
+        this._pointNewPresenter = new PointNewPresenter(this._eventsListComponent, this._handleViewAction, randomDataNewPoint);
     }
 
     init() {
         render(this._tripContainer, this._tripComponent, RenderPosition.BEFOREEND);
         render(this._tripComponent, this._eventsListComponent, RenderPosition.BEFOREEND);
 
+        this._pointsModel.addObserver(this._handleModelEvent);
+        this._filterModel.addObserver(this._handleModelEvent);
+
         this._renderTrip();
         
-        console.log(filter[this._filterModel.getFilter()](this._pointsModel.getPoints()).sort(sortedEvents));
+    }
+
+    destroy() {
+        this._clearTrip({resetSortType: true});
+    
+        remove(this._eventsListComponent);
+        remove(this._tripComponent);
+    
+        this._pointsModel.removeObserver(this._handleModelEvent);
+        this._filterModel.removeObserver(this._handleModelEvent);
     }
 
     createPoint() {
@@ -66,11 +77,10 @@ export default class Trip {
     }
 
     _handleModeChange() {
-        this._taskNewPresenter.destroy();
+        this._pointNewPresenter.destroy();
         Object
           .values(this._pointPresenter)
-          .forEach((presenter) => presenter.resetView());
-          
+          .forEach((presenter) => presenter.resetView());     
     }
 
     _handleViewAction(actionType, updateType, update) {
