@@ -9,6 +9,7 @@ import PointsModel from "./model/points.js";
 import FilterModel from "./model/filter.js";
 import { getRandomElement } from "./utils.js";
 import { MenuItem, UpdateType, FilterType } from "./const.js";
+import StatisticsView from "./view/statistics.js";
 
 const POINT_COUNT = 20;
 
@@ -41,7 +42,12 @@ render(coastTripInfo, new TripCoastView(points), RenderPosition.BEFOREEND);
 const siteContainerElement = document.querySelector('.page-main_container');
 
 const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, randomDataNewPoint);
-tripPresenter.init();
+//tripPresenter.init();
+
+const statisticsComponent = new StatisticsView(pointsModel.getPoints());
+render(siteContainerElement, statisticsComponent, RenderPosition.BEFOREEND);
+
+
 
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -64,4 +70,5 @@ const handleSiteMenuClick = (menuItem) => {
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 console.log(points);
+console.log(pointsModel.getPoints());
 
