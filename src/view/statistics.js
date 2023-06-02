@@ -1,13 +1,11 @@
-import SmartView from "./smart";
 import AbstractView from "./abstract";
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { makeItemsUniq, countPointsByType, countPointsByPrice } from "../utils/statistics";
+import { makeItemsUniq, countPointsByType, countPointsByPrice, calculateDurationByType, calculateDurationByTypeMs } from "../utils/statistics";
 
 const renderMoneyChart = (moneyCtx, points) => {
     const pointTypes = points.map(point => point.type.type);
     const uniqTypes = makeItemsUniq(pointTypes);
-    const pointByTypesCounts = uniqTypes.map((type) => countPointsByType(points, type));
     const pointByPriceCounts = uniqTypes.map((type) => countPointsByPrice(points, type));
 
     return new Chart(moneyCtx, {
@@ -155,6 +153,85 @@ const renderTypeChart = (typeCtx, points) => {
   });
 };
 
+const renderTimeChart = (timeCtx, points) => {
+  const pointTypes = points.map(point => point.type.type);
+  const uniqTypes = makeItemsUniq(pointTypes);
+  const pointByTimeCounts = uniqTypes.map(type => calculateDurationByType(points, type));
+  const pointByTimeCountsMs = uniqTypes.map(type => calculateDurationByTypeMs(points, type));
+
+
+  console.log(pointByTimeCounts);
+
+  return new Chart(timeCtx, {
+  plugins: [ChartDataLabels],
+  type: 'horizontalBar',
+  data: {
+    labels: uniqTypes.map(type => type.toUpperCase()),
+    datasets: [{
+      data: pointByTimeCountsMs,
+      backgroundColor: '#ffffff',
+      hoverBackgroundColor: '#ffffff',
+      anchor: 'start',
+    }],
+  },
+  options: {
+    plugins: {
+      datalabels: {
+        display: 'auto',
+        font: {
+          size: 13,
+        },
+        color: '#000000',
+        anchor: 'end',
+        align: 'start',
+        formatter: (val, context) => {
+          const index = context.dataIndex;
+          const value = pointByTimeCounts[index];
+          return value;
+        },
+      },
+    },
+    title: {
+      display: true,
+      text: 'TIME',
+      fontColor: '#000000',
+      fontSize: 23,
+      position: 'left',
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          fontColor: '#000000',
+          padding: 5,
+          fontSize: 13,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        barThickness: 44,
+      }],
+      xAxes: [{
+        ticks: {
+          display: false,
+          beginAtZero: true,
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false,
+        },
+        minBarLength: 50,
+      }],
+    },
+    legend: {
+      display: false,
+    },
+    tooltips: {
+      enabled: false,
+    },
+  },
+});
+};
 
 
 const createStatisticsTemplate = () => {
@@ -182,19 +259,11 @@ export default class Statistics extends AbstractView {
         this._data = points;
         this._moneyChart = null;
         this._typeChart = null;
-
-        this.afterRender()
-        
+        this._timeChart = null;       
     }
 
     getTemplate() {
         return createStatisticsTemplate();
-    }
-
-    afterRender() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this._setCharts();
-        })    
     }
 
     _setCharts() {
@@ -209,7 +278,6 @@ export default class Statistics extends AbstractView {
 
         this._moneyChart = renderMoneyChart(moneyCtx, this._data);
         this._typeChart = renderTypeChart(typeCtx, this._data);
-
-
+        this._timeChart = renderTimeChart(timeCtx, this._data);
     }
 }

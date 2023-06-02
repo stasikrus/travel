@@ -2,7 +2,7 @@ import SiteMenuView from "./view/site-menu.js";
 import FilterPresenter from "./presenter/filter.js";
 import TripInfoView from "./view/trip-info.js";
 import TripCoastView from "./view/trip-coast.js";
-import { render, RenderPosition} from "./utils/render.js";
+import { render, RenderPosition, remove} from "./utils/render.js";
 import { generatePoint } from "./mock/point.js";
 import TripPresenter from "./presenter/trip.js";
 import PointsModel from "./model/points.js";
@@ -10,8 +10,10 @@ import FilterModel from "./model/filter.js";
 import { getRandomElement } from "./utils.js";
 import { MenuItem, UpdateType, FilterType } from "./const.js";
 import StatisticsView from "./view/statistics.js";
+import ButtonNewView from "./view/button-new.js";
 
 const POINT_COUNT = 20;
+
 
 const points = new Array(POINT_COUNT).fill().map(generatePoint);
 const randomDataNewPoint = getRandomElement(points);
@@ -42,32 +44,41 @@ render(coastTripInfo, new TripCoastView(points), RenderPosition.BEFOREEND);
 const siteContainerElement = document.querySelector('.page-main_container');
 
 const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, randomDataNewPoint);
-//tripPresenter.init();
+tripPresenter.init();
 
-const statisticsComponent = new StatisticsView(pointsModel.getPoints());
-render(siteContainerElement, statisticsComponent, RenderPosition.BEFOREEND);
+const buttonNewComponent = new ButtonNewView();
+render(tripInfo, buttonNewComponent, RenderPosition.BEFOREEND); 
 
 
-
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-  evt.preventDefault();
-  tripPresenter.createPoint();
-});
+let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
       tripPresenter.init();
+      buttonNewComponent.toggleDisablesStatus();
+      remove(statisticsComponent);
       // Скрыть статистику
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
+      statisticsComponent = new StatisticsView(pointsModel.getPoints());
+      render(siteContainerElement, statisticsComponent, RenderPosition.BEFOREEND);
+      statisticsComponent._setCharts();
+      buttonNewComponent.toggleDisablesStatus();
       // Показать статистику
       break;
+    case MenuItem.NEW_EVENT:
+      tripPresenter.destroy();
+      tripPresenter.init();
+      tripPresenter.createPoint();
+      buttonNewComponent.toggleDisablesStatus();
+       break;  
   }
 };
 
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+buttonNewComponent.setButtonNewListener(handleSiteMenuClick);
 
 console.log(points);
 console.log(pointsModel.getPoints());

@@ -11,6 +11,7 @@ export default class PointNew {
 
         this._pointEditComponent = null;
 
+
         this._handleFormSubmit = this._handleFormSubmit.bind(this);
         this._handleDeleteClick = this._handleDeleteClick.bind(this);
         this._escKeyDownHandler = this._escKeyDownHandler.bind(this);

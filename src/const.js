@@ -5,6 +5,7 @@ export const compareTwoDates = (dateA, dateB) => dayjs(dateA).diff(dateB);
 export const MenuItem = {
   TABLE: 'TABLE',
   STATS: 'STATS',
+  NEW_EVENT: 'NEW EWENT',
 };
 
 const TYPES = [
