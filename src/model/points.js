@@ -53,5 +53,31 @@ export default class Points extends Observer {
     
         this._notify(updateType);
     }
+
+    static adaptToClient(point) {
+      const adaptedPoint = Object.assign(
+        {},
+        point,
+        {
+          date_from: new Date(point.date_from),
+          date_to: new Date(point.date_to), 
+        },
+      );
+
+      return adaptedPoint;
+    }
+
+    static adaptToServer(point) {
+      const adaptedPoint = Object.assign(
+        {},
+        point,
+        {
+          'date_from': point.date_from instanceof Date ? point.date_from.toISOString() : null, // На сервере дата хранится в ISO формате
+          'date_to': point.date_to instanceof Date ? point.date_to.toISOString() : null,
+        },
+      );
+  
+      return adaptedPoint;
+    }  
     
 }

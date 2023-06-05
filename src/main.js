@@ -11,15 +11,26 @@ import { getRandomElement } from "./utils.js";
 import { MenuItem, UpdateType, FilterType } from "./const.js";
 import StatisticsView from "./view/statistics.js";
 import ButtonNewView from "./view/button-new.js";
+import Api from "./api.js";
 
 const POINT_COUNT = 20;
+const AUTHORIZATION = 'Basic academy14';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 
 const points = new Array(POINT_COUNT).fill().map(generatePoint);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+
+
 const randomDataNewPoint = getRandomElement(points);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
+
+const onNewPointClose = () => {
+  buttonNewComponent.toggleDisablesStatus();
+};
 
 const filterModel = new FilterModel();
 
@@ -43,7 +54,7 @@ render(coastTripInfo, new TripCoastView(points), RenderPosition.BEFOREEND);
 
 const siteContainerElement = document.querySelector('.page-main_container');
 
-const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, randomDataNewPoint);
+const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, randomDataNewPoint, onNewPointClose);
 tripPresenter.init();
 
 const buttonNewComponent = new ButtonNewView();
@@ -82,4 +93,5 @@ buttonNewComponent.setButtonNewListener(handleSiteMenuClick);
 
 console.log(points);
 console.log(pointsModel.getPoints());
+console.log(api.getPoints());
 

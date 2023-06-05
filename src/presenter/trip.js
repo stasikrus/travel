@@ -10,12 +10,13 @@ import { SortType, UpdateType, UserAction, FilterType } from "../const";
 import { filter } from "../utils/filter";
 
 export default class Trip {
-    constructor(tripContainer, pointsModel, filterModel, randomDataNewPoint) {
+    constructor(tripContainer, pointsModel, filterModel, randomDataNewPoint, onNewPointClose) {
         this._tripContainer = tripContainer;
         this._pointsModel = pointsModel;
         this._filterModel = filterModel;
         this._pointPresenter = {};
         this._currentSortType = SortType.DAY;
+        this._onNewPointClose = onNewPointClose;
 
         this._sortComponent = null;
         
@@ -30,7 +31,7 @@ export default class Trip {
 
         
 
-        this._pointNewPresenter = new PointNewPresenter(this._eventsListComponent, this._handleViewAction, randomDataNewPoint);
+        this._pointNewPresenter = new PointNewPresenter(this._eventsListComponent, this._handleViewAction, randomDataNewPoint, this._onNewPointClose);
     }
 
     init() {

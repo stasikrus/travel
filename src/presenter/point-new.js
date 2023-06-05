@@ -4,10 +4,11 @@ import { remove, render, RenderPosition } from "../utils/render";
 import { UserAction, UpdateType } from "../const";
 
 export default class PointNew {
-    constructor(pointListContainer, changeData, randomDataNewPoint) {
+    constructor(pointListContainer, changeData, randomDataNewPoint, onNewPointClose) {
         this._pointListContainer = pointListContainer;
         this._changeData = changeData;
         this._randomDataNewPoint = randomDataNewPoint;
+        this._onNewPointClose = onNewPointClose;
 
         this._pointEditComponent = null;
 
@@ -51,6 +52,7 @@ export default class PointNew {
           // выдывал честный id задачи, нам нужно позаботиться об этом самим
           Object.assign({id: nanoid()}, point),
         );
+        this._onNewPointClose();
         this.destroy();
     }
 
@@ -61,6 +63,7 @@ export default class PointNew {
     _escKeyDownHandler(evt) {
         if (evt.key === 'Escape' || evt.key === 'Esc') {
           evt.preventDefault();
+          this._onNewPointClose();
           this.destroy();
         }
     }
