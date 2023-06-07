@@ -5,9 +5,9 @@ import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
 const createPointOfferTemplate = (offers) => {
-  return offers.length > 0 ? `${offers.map(({offer, price}) => `<li
+  return offers.length > 0 ? `${offers.map(({title, price}) => `<li
     class="event__offer">
-    <span class="event__offer-title">${offer}</span>
+    <span class="event__offer-title">${title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${price}</span>
     </li>`).join('')}`
@@ -27,7 +27,7 @@ const capitalizeFirstLetter = (string) => {
 }
 
 
-const createPointTrip = ({city: {city}, is_favorite, base_price, type: {type, offers}, date_from, date_to}) => {
+const createPointTrip = ({destination: {name}, offers, is_favorite, base_price, type, date_from, date_to}) => {
   
   const favoriteClassBtn = is_favorite ? 'event__favorite-btn--active' : '';
   
@@ -38,7 +38,7 @@ const createPointTrip = ({city: {city}, is_favorite, base_price, type: {type, of
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${city} ${capitalizeFirstLetter(type)}</h3>
+      <h3 class="event__title">${name} ${capitalizeFirstLetter(type)}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dayjs(date_from).format('YYYY-MM-DD[T]HH:mm')}">${dayjs(date_from).format('HH:mm')}</time>

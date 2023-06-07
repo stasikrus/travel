@@ -171,6 +171,7 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 }
 
 export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType, OFFERS, FilterType};

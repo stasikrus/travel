@@ -23,16 +23,16 @@ const createDestinationsOptionTemplate = (cities) => {
   return cities.map(({city}) => `<option value=${city}></option>`).join("");
 };
 
-const createEventOfferTemplate = ({ type: { offers } }) => {
+const createEventOfferTemplate = ({ offers, isDisabled}) => {
   if (offers.length > 0) {
     const offerTemplate = offers
-      .map(({ offer, price }) => {
-        const offerClassName = offer.split(' ').pop();
+      .map(({ title, price }) => {
+        const offerClassName = title.split(' ').pop();
         const checkedAttribute = getRandomInteger() ? 'checked' : '';
         return `<div class="event__offer-selector">
-          <input class="event__offer-checkbox visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${checkedAttribute}>
+          <input class="event__offer-checkbox visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${checkedAttribute} ${isDisabled ? 'disabled' : ''}>
           <label class="event__offer-label" for="event-offer-${offerClassName}-1">
-            <span class="event__offer-title">${offer}</span>
+            <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${price}</span>
           </label>
@@ -60,11 +60,11 @@ const createPhotoContainer = (pictures) => {
   : '';
 };
 
-const createEventDestinationTemplate = ({city: {description, photo}}) => {
+const createEventDestinationTemplate = ({destination: {description, pictures}}) => {
   return `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
   <p class="event__destination-description">${description}</p>
-  ${createPhotoContainer(photo)}
+  ${createPhotoContainer(pictures)}
 </section>`; 
 };
 
@@ -79,7 +79,7 @@ const createEditPoint = (destination) => {
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${destination.type.type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${destination.isDisabled ? 'disabled' : ''}>
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
@@ -94,7 +94,7 @@ const createEditPoint = (destination) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${destination.type.type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city.city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" ${destination.isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-1">
             ${createDestinationsOptionTemplate(DESTINATIONS)}
           </datalist>
@@ -102,10 +102,10 @@ const createEditPoint = (destination) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(destination.date_from)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(destination.date_from)}" ${destination.isDisabled ? 'disabled' : ''}>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(destination.date_to)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(destination.date_to)}" ${destination.isDisabled ? 'disabled' : ''}>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -113,11 +113,11 @@ const createEditPoint = (destination) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="" required>
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="" required ${destination.isDisabled ? 'disabled' : ''}>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${destination.isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset">${destination.isDeleting ? 'Deleting...' : 'Delete'}</button>
       </header>
       <section class="event__details">     
         ${createEventOfferTemplate(destination)}    
@@ -144,6 +144,8 @@ export default class EditPoint extends SmartView {
     this._setInnerHandlers();
     this._setDatePickerStart(this._datePickerStartDate);
     this._setDatePickerEnd(this._datePickerEndDate);
+
+    console.log(this._pointState)
 
   }
 
@@ -187,11 +189,25 @@ export default class EditPoint extends SmartView {
   }
 
   static parsePointDataToState(pointData) {
-    return Object.assign({}, pointData);
+    return Object.assign(
+      {}, 
+      pointData,
+      {
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      },
+    );
   }
 
   static parsePointStateToDate(state) {
-    return Object.assign({}, state) ;
+    data = Object.assign({}, state);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
   }
 
   _eventTypeChangeHandler(evt) {

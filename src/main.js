@@ -3,7 +3,6 @@ import FilterPresenter from "./presenter/filter.js";
 import TripInfoView from "./view/trip-info.js";
 import TripCoastView from "./view/trip-coast.js";
 import { render, RenderPosition, remove} from "./utils/render.js";
-import { generatePoint } from "./mock/point.js";
 import TripPresenter from "./presenter/trip.js";
 import PointsModel from "./model/points.js";
 import FilterModel from "./model/filter.js";
@@ -13,20 +12,14 @@ import StatisticsView from "./view/statistics.js";
 import ButtonNewView from "./view/button-new.js";
 import Api from "./api.js";
 
-const POINT_COUNT = 20;
 const AUTHORIZATION = 'Basic academy14';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
-
-const points = new Array(POINT_COUNT).fill().map(generatePoint);
 const api = new Api(END_POINT, AUTHORIZATION);
 
-
-
-const randomDataNewPoint = getRandomElement(points);
+//const randomDataNewPoint = getRandomElement(points);
 
 const pointsModel = new PointsModel();
-pointsModel.setPoints(points);
 
 const onNewPointClose = () => {
   buttonNewComponent.toggleDisablesStatus();
@@ -47,14 +40,14 @@ filterPresenter.init();
 
 const tripInfo = siteHeadElement.querySelector('.trip-main');
 
-render(tripInfo, new TripInfoView(points), RenderPosition.AFTERBEGIN);
+render(tripInfo, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
 
 const coastTripInfo = tripInfo.querySelector('.trip-info');
-render(coastTripInfo, new TripCoastView(points), RenderPosition.BEFOREEND);
+render(coastTripInfo, new TripCoastView(pointsModel.getPoints()), RenderPosition.BEFOREEND);
 
 const siteContainerElement = document.querySelector('.page-main_container');
 
-const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, randomDataNewPoint, onNewPointClose);
+const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, getRandomElement(pointsModel.getPoints()), onNewPointClose, api);
 tripPresenter.init();
 
 const buttonNewComponent = new ButtonNewView();
@@ -91,7 +84,18 @@ const handleSiteMenuClick = (menuItem) => {
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 buttonNewComponent.setButtonNewListener(handleSiteMenuClick);
 
-console.log(points);
-console.log(pointsModel.getPoints());
+api.getPoints()
+  .then((points) => {
+    console.log('Received points from the server:', points);
+    pointsModel.setPoints(UpdateType.INIT, points);
+    console.log('Updated points model:', pointsModel.getPoints());
+  })
+  .catch((err) => {
+    console.log('Error occurred:', err);
+    pointsModel.setPoints(UpdateType.INIT, []);
+    console.log('Updated points model with empty array:', pointsModel.getPoints());
+  });
+
+
 console.log(api.getPoints());
 
