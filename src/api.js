@@ -53,6 +53,12 @@ export default class Api {
       });
     }
 
+    getDestinations() {
+      return this._load({url: 'destinations'})
+          .then(Api.toJSON)
+          //.then((points) => points.map(PointsModel.adaptToClient));
+    }
+
     _load({
         url,
         method = Method.GET,

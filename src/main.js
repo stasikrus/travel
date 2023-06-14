@@ -47,7 +47,7 @@ render(coastTripInfo, new TripCoastView(pointsModel.getPoints()), RenderPosition
 
 const siteContainerElement = document.querySelector('.page-main_container');
 
-const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, getRandomElement(pointsModel.getPoints()), onNewPointClose, api);
+const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, onNewPointClose, api);
 tripPresenter.init();
 
 const buttonNewComponent = new ButtonNewView();
@@ -75,7 +75,7 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.NEW_EVENT:
       tripPresenter.destroy();
       tripPresenter.init();
-      tripPresenter.createPoint();
+      tripPresenter.createPoint(getRandomElement(pointsModel.getPoints()));
       buttonNewComponent.toggleDisablesStatus();
        break;  
   }
@@ -98,4 +98,3 @@ api.getPoints()
 
 
 console.log(api.getPoints());
-

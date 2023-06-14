@@ -3,9 +3,15 @@ import { getRandomElement, getRandomInteger } from "../utils";
 import SmartView from "./smart";
 import dayjs from "dayjs";
 import flatpickr from 'flatpickr';
+import Api from "../api";
 
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+const AUTHORIZATION = 'Basic academy14';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const createEventTypeItemTemplate = (avaibleTypes, currentType ='') => {
   return avaibleTypes.map(({type: type}) => `<div class="event__type-item">
@@ -54,7 +60,7 @@ const createEventOfferTemplate = ({ offers, isDisabled}) => {
 const createPhotoContainer = (pictures) => {
   return pictures.length > 0 ? `<div class="event__photos-container">
   <div class="event__photos-tape">
-     ${pictures.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join("")} 
+     ${pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join("")} 
   </div>
   </div>`
   : '';
@@ -77,7 +83,7 @@ const createEditPoint = (destination) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${destination.type.type}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${destination.type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${destination.isDisabled ? 'disabled' : ''}>
 
@@ -92,9 +98,9 @@ const createEditPoint = (destination) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${destination.type.type}
+            ${destination.type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" ${destination.isDisabled ? 'disabled' : ''}>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.destination.name}" list="destination-list-1" ${destination.isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-1">
             ${createDestinationsOptionTemplate(DESTINATIONS)}
           </datalist>
@@ -144,8 +150,6 @@ export default class EditPoint extends SmartView {
     this._setInnerHandlers();
     this._setDatePickerStart(this._datePickerStartDate);
     this._setDatePickerEnd(this._datePickerEndDate);
-
-    console.log(this._pointState)
 
   }
 
@@ -201,20 +205,20 @@ export default class EditPoint extends SmartView {
   }
 
   static parsePointStateToDate(state) {
-    data = Object.assign({}, state);
+    state = Object.assign({}, state);
 
-    delete data.isDisabled;
-    delete data.isSaving;
-    delete data.isDeleting;
+    delete state.isDisabled;
+    delete state.isSaving;
+    delete state.isDeleting;
 
-    return data;
+    return state;
   }
 
   _eventTypeChangeHandler(evt) {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
-    const selectedTypeObject = TYPES.find(obj => obj.type === evt.target.value.trim());
+    const selectedTypeObject = TYPES.find(obj => obj.type === evt.target.value);
 
     const findSelectedOffers = () => {
       if (selectedTypeObject) {
@@ -224,32 +228,41 @@ export default class EditPoint extends SmartView {
     }
   
     this.updateData({
-      type: {
         type: evt.target.value.trim(),
         offers: findSelectedOffers()
-      }
     });
   }
 
   _destinationChangeHandler(evt) {
-    if (!DESTINATIONS.some(obj => obj.city === evt.target.value)) {
-      return;
-    }
-
-    evt.preventDefault();
-    
-    const selectedTypeObject = DESTINATIONS.find(obj => obj.city === evt.target.value);
-
-    if (selectedTypeObject) {
-      this.updateData({
-        city: {
-          city: evt.target.value,
-          description: selectedTypeObject.description,
-          photo: selectedTypeObject.photo,
+    api.getDestinations()
+      .then((destinations) => {
+        
+        if (!destinations.some(obj => obj.name === evt.target.value)) {
+          return;
+          
         }
+  
+        evt.preventDefault();
+      
+        const selectedTypeObject = destinations.find(obj => obj.name === evt.target.value);
+        console.log(selectedTypeObject)
+  
+        if (selectedTypeObject) {
+          this.updateData({
+            destination: {
+              name: selectedTypeObject.name,
+              description: selectedTypeObject.description,
+              pictures: selectedTypeObject.pictures,
+            }
+          });
+        }
+      })
+      .catch((error) => {
+        // Обработка ошибки, если произошла ошибка при получении данных
+        console.error('Error fetching destinations:', error);
       });
-    }
-  }
+}
+  
 
   
   restoreHandlers() {

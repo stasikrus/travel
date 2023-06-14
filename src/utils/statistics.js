@@ -5,12 +5,12 @@ import duration from 'dayjs/plugin/duration';
 export const makeItemsUniq = (items) => [...new Set(items)];
 
 export const countPointsByType = (points, type) => {
-    return points.filter((point) => point.type.type === type).length;
+    return points.filter((point) => point.type === type).length;
 };
 
 export const countPointsByPrice = (points, type) => {
     return points.reduce((sum, point) => {
-      if (point.type.type === type) {
+      if (point.type === type) {
         return sum + point.base_price;
       }
       return sum;
@@ -19,7 +19,7 @@ export const countPointsByPrice = (points, type) => {
   
 
 export const calculateDurationByType = (points, type) => {
-  const filteredPoints = points.filter(point => point.type.type === type);
+  const filteredPoints = points.filter(point => point.type === type);
   const totalDurationMs = filteredPoints.reduce((sum, point) => {
     const durationMs = dayjs(point.date_to).diff(dayjs(point.date_from));
     return sum + durationMs;
@@ -34,7 +34,7 @@ export const calculateDurationByType = (points, type) => {
 };
 
 export const calculateDurationByTypeMs = (points, type) => {
-  const filteredPoints = points.filter(point => point.type.type === type);
+  const filteredPoints = points.filter(point => point.type === type);
   const totalDurationMs = filteredPoints.reduce((sum, point) => {
     const durationMs = dayjs(point.date_to).diff(dayjs(point.date_from));
     return sum + durationMs;

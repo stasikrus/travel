@@ -128,6 +128,7 @@ export default class PointPresenter {
 
     _handleEditClick() {
         this._replaceCardToForm();
+        //this._pointEditComponent.getDestinationsData();
     }
 
     
@@ -149,7 +150,7 @@ export default class PointPresenter {
         const isMinorUpdate = 
           this._point.date_from !== update.date_from || 
           this._point.date_to !== update.date_to || 
-          this._point.type.type !== update.type.type;
+          this._point.type !== update.type;
 
           
         this._changeData(

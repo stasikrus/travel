@@ -4,7 +4,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { makeItemsUniq, countPointsByType, countPointsByPrice, calculateDurationByType, calculateDurationByTypeMs } from "../utils/statistics";
 
 const renderMoneyChart = (moneyCtx, points) => {
-    const pointTypes = points.map(point => point.type.type);
+    const pointTypes = points.map(point => point.type);
     const uniqTypes = makeItemsUniq(pointTypes);
     const pointByPriceCounts = uniqTypes.map((type) => countPointsByPrice(points, type));
 
@@ -79,7 +79,7 @@ const renderMoneyChart = (moneyCtx, points) => {
 };
 
 const renderTypeChart = (typeCtx, points) => {
-    const pointTypes = points.map(point => point.type.type);
+    const pointTypes = points.map(point => point.type);
     const uniqTypes = makeItemsUniq(pointTypes);
     const pointByTypesCounts = uniqTypes.map((type) => countPointsByType(points, type));
 
@@ -154,13 +154,14 @@ const renderTypeChart = (typeCtx, points) => {
 };
 
 const renderTimeChart = (timeCtx, points) => {
-  const pointTypes = points.map(point => point.type.type);
+  const pointTypes = points.map(point => point.type);
   const uniqTypes = makeItemsUniq(pointTypes);
   const pointByTimeCounts = uniqTypes.map(type => calculateDurationByType(points, type));
   const pointByTimeCountsMs = uniqTypes.map(type => calculateDurationByTypeMs(points, type));
 
 
   console.log(pointByTimeCounts);
+  console.log(points);
 
   return new Chart(timeCtx, {
   plugins: [ChartDataLabels],
