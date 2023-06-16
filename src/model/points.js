@@ -4,6 +4,8 @@ export default class Points extends Observer {
     constructor() {
         super();
         this._points = [];
+        this._destinations = [];
+        this._offers = [];
     }
 
     setPoints(updateType, points) {
@@ -43,6 +45,7 @@ export default class Points extends Observer {
     
     deletePoint(updateType, update) {
         const index = this._points.findIndex((point) => point.id === update.id);
+        console.log(updateType, update.id)
     
         if (index === -1) {
           throw new Error('Can\'t delete unexisting point');
@@ -55,6 +58,24 @@ export default class Points extends Observer {
     
         this._notify(updateType);
     }
+
+    setDestinations(destinations) {
+      this._destinations = destinations;
+    }
+
+    getDestinations() {
+      return this._destinations;
+    }
+
+    setOffers(offers) {
+      this._offers = offers;
+    }
+
+    getOffers() {
+      return this._offers;
+    }
+
+
 
     static adaptToClient(point) {
       const adaptedPoint = Object.assign(
@@ -76,6 +97,7 @@ export default class Points extends Observer {
         {
           'date_from': point.date_from instanceof Date ? point.date_from.toISOString() : null, // На сервере дата хранится в ISO формате
           'date_to': point.date_to instanceof Date ? point.date_to.toISOString() : null,
+          'base_price': parseInt(point.base_price),
         },
       );
   

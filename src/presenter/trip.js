@@ -33,7 +33,6 @@ export default class Trip {
         this._handleModeChange = this._handleModeChange.bind(this);
         this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-        
 
         this._pointNewPresenter = new PointNewPresenter(this._eventsListComponent, this._handleViewAction, this._onNewPointClose);
     }
@@ -59,10 +58,11 @@ export default class Trip {
         this._filterModel.removeObserver(this._handleModelEvent);
     }
 
-    createPoint(randomData) {
+    createPoint(randomData, destinationsData, offersData) {
+        console.log(randomData)
         this._currentSortType = SortType.DAY;
         this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-        this._pointNewPresenter.init(randomData);
+        this._pointNewPresenter.init(randomData, destinationsData, offersData);
     }
 
     _getPoints() {
@@ -96,8 +96,9 @@ export default class Trip {
                   .then((response) => {
                       this._pointsModel.updatePoint(updateType, response);
                   })
-                  .catch(() => {
+                  .catch((err) => {
                       this._pointPresenter[update.id].setViewState(PointPresenterViewState.ABORTING);
+                      console.log(err);
                   });
                 break;
             case UserAction.ADD_POINT:
@@ -113,11 +114,12 @@ export default class Trip {
             case UserAction.DELETE_POINT:
                 this._pointPresenter[update.id].setViewState(PointPresenterViewState.DELETING);
                 this._api.deletePoint(update)
-                  .then((response) => {
-                    this._pointsModel.deletePoint(updateType, response);
+                  .then(() => {
+                    this._pointsModel.deletePoint(updateType, update);
                   })
-                  .catch(() => {
+                  .catch((err) => {
                     this._pointPresenter[update.id].setViewState(PointPresenterViewState.ABORTING);
+                    console.log(err);
                   });
                 break;        
         }
@@ -168,7 +170,7 @@ export default class Trip {
     }
 
     _renderPoint(point) {
-       const pointPresenter = new PointPresenter(this._eventsListComponent, this._handleViewAction, this._handleModeChange);
+       const pointPresenter = new PointPresenter(this._eventsListComponent, this._handleViewAction, this._handleModeChange, this._pointsModel.getDestinations(), this._pointsModel.getOffers());
        pointPresenter.init(point);
        this._pointPresenter[point.id] = pointPresenter;
     };

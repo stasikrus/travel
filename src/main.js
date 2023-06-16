@@ -7,7 +7,7 @@ import TripPresenter from "./presenter/trip.js";
 import PointsModel from "./model/points.js";
 import FilterModel from "./model/filter.js";
 import { getRandomElement } from "./utils.js";
-import { MenuItem, UpdateType, FilterType } from "./const.js";
+import { MenuItem, UpdateType} from "./const.js";
 import StatisticsView from "./view/statistics.js";
 import ButtonNewView from "./view/button-new.js";
 import Api from "./api.js";
@@ -75,7 +75,7 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.NEW_EVENT:
       tripPresenter.destroy();
       tripPresenter.init();
-      tripPresenter.createPoint(getRandomElement(pointsModel.getPoints()));
+      tripPresenter.createPoint(getRandomElement(pointsModel.getPoints()), pointsModel.getDestinations(), pointsModel.getOffers());
       buttonNewComponent.toggleDisablesStatus();
        break;  
   }
@@ -84,17 +84,46 @@ const handleSiteMenuClick = (menuItem) => {
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 buttonNewComponent.setButtonNewListener(handleSiteMenuClick);
 
-api.getPoints()
+
+
+api.getDestinations()
+  .then((destinations) => { 
+    console.log('Received destinations from the server:', destinations);
+    pointsModel.setDestinations(destinations);
+    return api.getOffers();  
+  })
+  .then((offers) => {
+    console.log('Received points from the server:', offers);
+    pointsModel.setOffers(offers);
+    return api.getPoints(); // Возвращаем промис для последующей цепочки
+  })
   .then((points) => {
     console.log('Received points from the server:', points);
     pointsModel.setPoints(UpdateType.INIT, points);
     console.log('Updated points model:', pointsModel.getPoints());
+    
   })
-  .catch((err) => {
-    console.log('Error occurred:', err);
+  .catch((error) => {
+    console.error('Error occurred:', error);
     pointsModel.setPoints(UpdateType.INIT, []);
     console.log('Updated points model with empty array:', pointsModel.getPoints());
   });
+
+
+// api.getPoints()
+//   .then((points) => {
+//     console.log('Received points from the server:', points);
+//     pointsModel.setPoints(UpdateType.INIT, points);
+//     console.log('Updated points model:', pointsModel.getPoints());
+//   })
+//   .catch((err) => {
+//     console.log('Error occurred:', err);
+//     pointsModel.setPoints(UpdateType.INIT, []);
+//     console.log('Updated points model with empty array:', pointsModel.getPoints());
+//   });
+
+
+
 
 
 console.log(api.getPoints());

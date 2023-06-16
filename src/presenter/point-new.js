@@ -17,12 +17,12 @@ export default class PointNew {
         this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     }
 
-    init(randomData) {
+    init(randomData, destinationsData, offersData) {
         if (this._pointEditComponent !== null) {
             return;
         }
 
-        this._pointEditComponent = new EditPointView(randomData);
+        this._pointEditComponent = new EditPointView(randomData, destinationsData, offersData);
         this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
         this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 

@@ -47,16 +47,21 @@ export default class Api {
     }
 
     deletePoint(point) {
+      console.log(point.id)
       return this._load({
         url: `points/${point.id}`,
         method: Method.DELETE,
-      });
+      })
     }
 
     getDestinations() {
       return this._load({url: 'destinations'})
           .then(Api.toJSON)
-          //.then((points) => points.map(PointsModel.adaptToClient));
+    }
+
+    getOffers() {
+      return this._load({url: 'offers'})
+          .then(Api.toJSON)
     }
 
     _load({

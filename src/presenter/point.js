@@ -17,10 +17,12 @@ export const State = {
   
 
 export default class PointPresenter {
-    constructor(eventsListContainer, changeData, changeMode) {
+    constructor(eventsListContainer, changeData, changeMode, destinationsData, offersData) {
         this._eventsListContainer = eventsListContainer;
         this._changeData = changeData;
         this._changeMode = changeMode;
+        this._destinationsData = destinationsData;
+        this._offersData = offersData;
 
         this._pointComponent = null;
         this._pointEditComponent = null;
@@ -41,7 +43,7 @@ export default class PointPresenter {
         const prevEditComponent = this._pointEditComponent;
 
         this._pointComponent = new PointView(point);
-        this._pointEditComponent = new EditPointView(point);
+        this._pointEditComponent = new EditPointView(point, this._destinationsData, this._offersData);
 
         this._pointComponent.setEditClickHandler(this._handleEditClick);
         this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick)
@@ -128,7 +130,6 @@ export default class PointPresenter {
 
     _handleEditClick() {
         this._replaceCardToForm();
-        //this._pointEditComponent.getDestinationsData();
     }
 
     
@@ -150,9 +151,9 @@ export default class PointPresenter {
         const isMinorUpdate = 
           this._point.date_from !== update.date_from || 
           this._point.date_to !== update.date_to || 
-          this._point.type !== update.type;
+          this._point.type !== update.type ||
+          this._point.base_price !== update.base_price;
 
-          
         this._changeData(
             UserAction.UPDATE_POINT,
             isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,

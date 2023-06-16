@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Api from "./api";
 
 export const compareTwoDates = (dateA, dateB) => dayjs(dateA).diff(dateB);
 
@@ -112,7 +113,26 @@ const DESTINATIONS = [
       description: 'London fermentum tortor ac porta dapibus.',
       photo: ['http://picsum.photos/248/152?r=4', 'http://picsum.photos/248/152?r=9'],
     },
-]  
+]
+
+const AUTHORIZATION = 'Basic academy14';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const DESTINATIONS_NEW = () => {
+  api.getDestinations()
+  .then((destinations) => { 
+    console.log('Received destinations from the server:', destinations);
+    return destinations;
+  })  
+    
+  .catch((error) => {
+    console.error('Error occurred:', error);
+  });
+};
+
+
 
 const DESCRIPTIONS = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -174,4 +194,4 @@ export const UpdateType = {
   INIT: 'INIT'
 }
 
-export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType, OFFERS, FilterType};
+export { TYPES, DESTINATIONS, DESCRIPTIONS, SortType, OFFERS, FilterType, DESTINATIONS_NEW};
