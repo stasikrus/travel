@@ -17,8 +17,6 @@ const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
-//const randomDataNewPoint = getRandomElement(points);
-
 const pointsModel = new PointsModel();
 
 const onNewPointClose = () => {
@@ -40,11 +38,6 @@ filterPresenter.init();
 
 const tripInfo = siteHeadElement.querySelector('.trip-main');
 
-render(tripInfo, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
-
-const coastTripInfo = tripInfo.querySelector('.trip-info');
-render(coastTripInfo, new TripCoastView(pointsModel.getPoints()), RenderPosition.BEFOREEND);
-
 const siteContainerElement = document.querySelector('.page-main_container');
 
 const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, onNewPointClose, api);
@@ -52,7 +45,6 @@ tripPresenter.init();
 
 const buttonNewComponent = new ButtonNewView();
 render(tripInfo, buttonNewComponent, RenderPosition.BEFOREEND); 
-
 
 let statisticsComponent = null;
 
@@ -84,8 +76,6 @@ const handleSiteMenuClick = (menuItem) => {
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 buttonNewComponent.setButtonNewListener(handleSiteMenuClick);
 
-
-
 api.getDestinations()
   .then((destinations) => { 
     console.log('Received destinations from the server:', destinations);
@@ -93,13 +83,16 @@ api.getDestinations()
     return api.getOffers();  
   })
   .then((offers) => {
-    console.log('Received points from the server:', offers);
+    console.log('Received offers from the server:', offers);
     pointsModel.setOffers(offers);
     return api.getPoints(); // Возвращаем промис для последующей цепочки
   })
   .then((points) => {
     console.log('Received points from the server:', points);
     pointsModel.setPoints(UpdateType.INIT, points);
+    render(tripInfo, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
+    const coastTripInfo = tripInfo.querySelector('.trip-info');
+    render(coastTripInfo, new TripCoastView(pointsModel.getPoints()), RenderPosition.BEFOREEND);
     console.log('Updated points model:', pointsModel.getPoints());
     
   })
@@ -109,21 +102,6 @@ api.getDestinations()
     console.log('Updated points model with empty array:', pointsModel.getPoints());
   });
 
-
-// api.getPoints()
-//   .then((points) => {
-//     console.log('Received points from the server:', points);
-//     pointsModel.setPoints(UpdateType.INIT, points);
-//     console.log('Updated points model:', pointsModel.getPoints());
-//   })
-//   .catch((err) => {
-//     console.log('Error occurred:', err);
-//     pointsModel.setPoints(UpdateType.INIT, []);
-//     console.log('Updated points model with empty array:', pointsModel.getPoints());
-//   });
-
-
-
-
-
-console.log(api.getPoints());
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js');
+  });

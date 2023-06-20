@@ -23,14 +23,17 @@ const createDestinationsOptionTemplate = (destinations) => {
 };
 
 
-const createEventOfferTemplate = ({ offers, isDisabled}) => {
+const createEventOfferTemplate = ({ offers, type, isDisabled}, offersData) => {
+  
+
   if (offers.length > 0) {
-    const offerTemplate = offers
-      .map(({ title, price }) => {
+    const offersIndex = offersData.findIndex((offer) => offer.type === type);
+    const offerTemplate = offersData[offersIndex].offers
+      .map(({title, price}) => {
         const offerClassName = title.split(' ').pop();
         
         return `<div class="event__offer-selector">
-          <input class="event__offer-checkbox visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${isDisabled ? 'disabled' : ''}>
+          <input class="event__offer-checkbox visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${isDisabled ? 'disabled' : ''} ${offers.some((offer) => offer.title === title) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${offerClassName}-1">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -119,7 +122,7 @@ const createEditPoint = (destination, destinationsData, offersData) => {
         <button class="event__reset-btn" type="reset">${destination.isDeleting ? 'Deleting...' : 'Delete'}</button>
       </header>
       <section class="event__details">     
-        ${createEventOfferTemplate(destination)}    
+        ${createEventOfferTemplate(destination, offersData)}    
       </section>
       ${createEventDestinationTemplate(destination)}
       </section>
