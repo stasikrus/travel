@@ -2,6 +2,8 @@ import PointView from "../view/point";
 import EditPointView from "../view/edit-point";
 import { remove, render, RenderPosition, replace } from "../utils/render";
 import { UserAction, UpdateType } from "../const";
+import { isOnline } from "../utils";
+import { toast } from "../utils/toast";
 
 
 const Mode = {
@@ -129,6 +131,11 @@ export default class PointPresenter {
     }
 
     _handleEditClick() {
+        if (!isOnline()) {
+            toast('You can\'t edit point offline');
+            return;
+        }
+
         this._replaceCardToForm();
     }
 
@@ -161,6 +168,11 @@ export default class PointPresenter {
     }
 
     _handleDeleteClick(point) {
+        if (!isOnline()) {
+            toast('You can\'t delete point offline');
+            return;
+        }
+
         this._changeData(
             UserAction.DELETE_POINT,
             UpdateType.MINOR,

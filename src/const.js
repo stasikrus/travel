@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import Api from "./api";
+import Api from "./api/api.js";
 
 export const compareTwoDates = (dateA, dateB) => dayjs(dateA).diff(dateB);
 

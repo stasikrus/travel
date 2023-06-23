@@ -5,7 +5,7 @@ import TripView from "../view/trip";
 import { remove, render, RenderPosition } from "../utils/render";
 import PointPresenter, {State as PointPresenterViewState} from "./point";
 import PointNewPresenter from "./point-new";
-import { sortPointPrice, sortedEvents, getRandomElement } from "../utils";
+import { sortPointPrice, sortedEvents } from "../utils";
 import { SortType, UpdateType, UserAction, FilterType } from "../const";
 import { filter } from "../utils/filter";
 import LoadingView from "../view/loading";

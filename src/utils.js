@@ -7,6 +7,10 @@ const getRandomInteger = (a = 0, b = 1) => {
     return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+const isOnline = () => {
+    return window.navigator.onLine;
+};
+
 const getRandomElement = (arr) => {
     return arr[getRandomInteger(0, arr.length - 1)];
 };
@@ -38,4 +42,4 @@ export const sortedEvents = (a, b) => {
   return durationA - durationB;
 };
 
-export { getRandomInteger, getRandomElement, getRandomDate };
+export { getRandomInteger, getRandomElement, getRandomDate, isOnline };
