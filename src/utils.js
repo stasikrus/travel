@@ -42,4 +42,13 @@ export const sortedEvents = (a, b) => {
   return durationA - durationB;
 };
 
+export const sortByDate = (a, b) => {
+    const startDatePointA = a.date_from;
+    const startDatePointB = b.date_from;
+  
+    return dayjs(startDatePointA).diff(startDatePointB);
+};
+
+
+
 export { getRandomInteger, getRandomElement, getRandomDate, isOnline };

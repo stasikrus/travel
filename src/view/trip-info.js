@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 const formatDates = (datesArray) => {
   if (datesArray.length === 0) {
-    return ''; // Если массив пустой, вернуть пустую строку
+    return ''; 
   }
 
   const firstDate = dayjs(datesArray[0].date_from);
@@ -38,8 +38,6 @@ export default class TripInfo extends AbstractView {
   constructor(destination) {
     super()
     this._destination = destination;
-
-    console.log(this._destination)
   }
 
   getTemplate() {

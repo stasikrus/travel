@@ -5,13 +5,15 @@ import TripView from "../view/trip";
 import { remove, render, RenderPosition } from "../utils/render";
 import PointPresenter, {State as PointPresenterViewState} from "./point";
 import PointNewPresenter from "./point-new";
-import { sortPointPrice, sortedEvents } from "../utils";
+import { sortPointPrice, sortedEvents, sortByDate } from "../utils";
 import { SortType, UpdateType, UserAction, FilterType } from "../const";
 import { filter } from "../utils/filter";
 import LoadingView from "../view/loading";
+import TripInfoView from "../view/trip-info";
+import TripCoastView from "../view/trip-coast";
 
 export default class Trip {
-    constructor(tripContainer, pointsModel, filterModel, onNewPointClose, api) {
+    constructor(tripContainer, pointsModel, filterModel, onNewPointClose, api, tripInfo) {
         this._tripContainer = tripContainer;
         this._pointsModel = pointsModel;
         this._filterModel = filterModel;
@@ -19,6 +21,7 @@ export default class Trip {
         this._currentSortType = SortType.DAY;
         this._onNewPointClose = onNewPointClose;
         this._api = api;
+        this._tripInfo = tripInfo;
 
         this._sortComponent = null;
         this._isLoading = true;
@@ -27,6 +30,8 @@ export default class Trip {
         this._eventsListComponent = new EventsListView();
         this._noPointView = new NoPointView();
         this._loadingComponent =  new LoadingView();
+        this._tripInfoComponent = null;
+        this._tripCostComponent = null;
 
         this._handleViewAction = this._handleViewAction.bind(this);
         this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -49,7 +54,7 @@ export default class Trip {
     }
 
     destroy() {
-        this._clearTrip({resetSortType: true});
+        this._clearTrip({resetSortType: true, withoutTripInfo: true});
     
         remove(this._eventsListComponent);
         remove(this._tripComponent);
@@ -72,6 +77,8 @@ export default class Trip {
         
 
         switch (this._currentSortType) {
+            case SortType.DAY:
+                return filtredPoints.sort(sortByDate);
             case SortType.TIME:
                 return filtredPoints.sort(sortedEvents);
             case SortType.PRICE:
@@ -188,7 +195,7 @@ export default class Trip {
         render(this._tripComponent, this._noPointView, RenderPosition.BEFOREEND);
     }
 
-    _clearTrip({resetSortType = false} = {}) {
+    _clearTrip({resetSortType = false, withoutTripInfo = false} = {}) {
         this._pointNewPresenter.destroy();
 
         Object
@@ -203,6 +210,22 @@ export default class Trip {
         if (resetSortType) {
            this._currentSortType = SortType.DAY;
         }
+
+        if (withoutTripInfo) {
+            return;
+        }
+
+        remove(this._tripInfoComponent);
+        remove(this._tripCostComponent);
+        this._tripInfoComponent = null;
+    }
+
+    _renderTripInfo(points) {
+        this._tripInfoComponent = new TripInfoView(points);
+        render(this._tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN); 
+
+        this._tripCostComponent = new TripCoastView(points);
+        render(this._tripInfoComponent, this._tripCostComponent, RenderPosition.BEFOREEND);
     }
 
     _renderTrip() {
@@ -211,12 +234,18 @@ export default class Trip {
             return;
         }
 
-        if (this._getPoints().length < 1) {
+        const points = this._getPoints();
+
+        if (points.length < 1) {
             this._renderNoPoint();
             return;
         }
         
         this._renderSort();
         this._renderPoints();
+
+        if (this._tripInfoComponent === null) {
+          this._renderTripInfo(points);  
+        }  
     }
 };

@@ -97,7 +97,6 @@ export default class Provider {
         .then((offers) => {
           const items = offers.map(PointsModel.adaptToServer);
           this._store.setItems('offers', items);
-          console.log(offers)
           return offers;
         });
     }

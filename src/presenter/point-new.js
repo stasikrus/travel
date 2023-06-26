@@ -6,7 +6,6 @@ export default class PointNew {
     constructor(pointListContainer, changeData, onNewPointClose) {
         this._pointListContainer = pointListContainer;
         this._changeData = changeData;
-        //this._randomDataNewPoint = randomDataNewPoint;
         this._onNewPointClose = onNewPointClose;
 
         this._pointEditComponent = null;

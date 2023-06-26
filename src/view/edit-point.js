@@ -133,7 +133,7 @@ const createEditPoint = (destination, destinationsData, offersData) => {
 export default class EditPoint extends SmartView {
   constructor(destination, destinationsData, offersData) {
     super()
-    this._pointState = EditPoint.parsePointDataToState(destination); // ПРОВЕРИТЬ ЗАВИСИМОСТИ!!
+    this._pointState = EditPoint.parsePointDataToState(destination); 
     this._destinationsData = destinationsData;
     this._offersData = offersData;
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);

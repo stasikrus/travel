@@ -48,7 +48,7 @@ const tripInfo = siteHeadElement.querySelector('.trip-main');
 
 const siteContainerElement = document.querySelector('.page-main_container');
 
-const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, onNewPointClose, apiWithProvider);
+const tripPresenter = new TripPresenter(siteContainerElement, pointsModel, filterModel, onNewPointClose, apiWithProvider, tripInfo);
 tripPresenter.init();
 
 const buttonNewComponent = new ButtonNewView();
@@ -77,7 +77,6 @@ const handleSiteMenuClick = (menuItem) => {
       tripPresenter.init();
       if (!isOnline()) {
         toast('You can\'t create new point offline');
-        //siteMenuComponent.setMenuItem(MenuItem.TABLE);
         break;
       }
       tripPresenter.createPoint(getRandomElement(pointsModel.getPoints()), pointsModel.getDestinations(), pointsModel.getOffers());
@@ -91,22 +90,16 @@ buttonNewComponent.setButtonNewListener(handleSiteMenuClick);
 
 apiWithProvider.getDestinations()
   .then((destinations) => { 
-    console.log('Received destinations from the server:', destinations);
     pointsModel.setDestinations(destinations);
     return apiWithProvider.getOffers();  
   })
   .then((offers) => {
-    console.log('Received offers from the server:', offers);
     pointsModel.setOffers(offers);
     return apiWithProvider.getPoints(); 
   })
   .then((points) => {
     console.log('Received points from the server:', points);
     pointsModel.setPoints(UpdateType.INIT, points);
-    render(tripInfo, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
-    const coastTripInfo = tripInfo.querySelector('.trip-info');
-    render(coastTripInfo, new TripCoastView(pointsModel.getPoints()), RenderPosition.BEFOREEND);
-    
   })
   .catch((error) => {
     console.error('Error occurred:', error);
